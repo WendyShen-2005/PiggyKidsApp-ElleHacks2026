@@ -1,0 +1,390 @@
+.kids-container {
+  min-height: 100vh;
+  background-color: #fce7f3;
+  padding-bottom: 5rem;
+  font-family: sans-serif;
+}
+
+.kids-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.profile-btn {
+  background: white;
+  padding: 0.5rem;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.kids-title {
+  font-weight: 900;
+  color: #db2777;
+}
+
+.kids-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: linear-gradient(to bottom right, #6366f1, #4f46e5);
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.kids-main {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.balance-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 2rem;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.balance-label {
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.2em;
+}
+
+.balance-amount {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #1e293b;
+}
+
+.balance-bg-icon {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  opacity: 0.05;
+}
+
+.interest-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 2rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+.interest-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.interest-title {
+  font-weight: 900;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #334155;
+}
+
+.growth-percent {
+  font-weight: 900;
+  font-size: 0.75rem;
+  color: #16a34a;
+}
+
+.graph {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  height: 10rem;
+}
+
+.bar-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  position: relative;
+}
+
+.bar {
+  width: 100%;
+  background-color: #fbcfe8;
+  border-radius: 1rem 1rem 0 0;
+  position: relative;
+  cursor: pointer;
+}
+
+.bar:hover {
+  background-color: #f472b6;
+}
+
+.tooltip {
+  position: absolute;
+  top: -3rem;
+  background: #1e293b;
+  color: white;
+  font-size: 0.625rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.bar:hover .tooltip {
+  opacity: 1;
+}
+
+.bar-label {
+  font-size: 0.5rem;
+  font-weight: 700;
+  color: #db2777;
+  margin-bottom: 0.25rem;
+  opacity: 0;
+}
+
+.bar:hover .bar-label {
+  opacity: 1;
+}
+
+.graph-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #94a3b8;
+}
+
+.kids-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.tasks-btn,
+.farm-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2rem;
+  border-radius: 2rem;
+  color: white;
+  font-weight: 900;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  border-bottom: 0.5rem solid;
+}
+
+.tasks-btn {
+  background-color: #6366f1;
+  border-bottom-color: #4f46e5;
+}
+
+.farm-btn {
+  background-color: #10b981;
+  border-bottom-color: #047857;
+}
+
+.floating-pig {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  background: linear-gradient(to bottom right, #ec4899, #db2777);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.25rem solid white;
+  z-index: 40;
+  transition: transform 0.2s ease;
+}
+
+.floating-pig:hover {
+  transform: scale(1.1);
+}
+
+.floating-pig.speaking {
+  animation: pulse 1s infinite;
+}
+
+.floating-pig.bouncing {
+  animation: bounce 1s infinite;
+}
+
+.floating-label {
+  position: absolute;
+  top: -1rem;
+  background: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.625rem;
+  font-weight: bold;
+  color: #db2777;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.floating-icon {
+  color: white;
+}
+
+.pig-chat-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 1rem;
+  backdrop-filter: blur(5px);
+  z-index: 50;
+}
+
+.pig-chat-modal {
+  background: white;
+  width: 100%;
+  max-width: 28rem;
+  border-radius: 3rem 3rem 1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  height: 70vh;
+}
+
+.pig-chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: #fdf2f8;
+  border-radius: 3rem 3rem 0 0;
+}
+
+.pig-chat-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 900;
+  color: #1e293b;
+}
+
+.close-btn {
+  background: white;
+  padding: 0.5rem;
+  border-radius: 50%;
+}
+
+.pig-chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.message-wrapper {
+  display: flex;
+}
+
+.message-wrapper.user {
+  justify-content: flex-end;
+}
+
+.message-wrapper.pig {
+  justify-content: flex-start;
+}
+
+.message-box {
+  max-width: 85%;
+  padding: 1rem;
+  border-radius: 1rem;
+  position: relative;
+}
+
+.user-msg {
+  background-color: #6366f1;
+  color: white;
+  border-top-right-radius: 0;
+}
+
+.pig-msg {
+  background-color: #f1f5f9;
+  color: #1e293b;
+  border-top-left-radius: 0;
+  border: 1px solid #e2e8f0;
+}
+
+.tts-btn {
+  position: absolute;
+  bottom: -0.5rem;
+  right: -0.5rem;
+  background: white;
+  padding: 0.25rem;
+  border-radius: 50%;
+}
+
+.pig-chat-input {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.pig-chat-input input {
+  flex: 1;
+  padding: 1rem;
+  border-radius: 2rem;
+  border: 1px solid #e2e8f0;
+  outline: none;
+}
+
+.pig-chat-input button {
+  background: #db2777;
+  color: white;
+  padding: 1rem;
+  border-radius: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}

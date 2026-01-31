@@ -1,4 +1,7 @@
 require('dotenv').config();
+console.log("Users URI:", process.env.MONGO_USERS);
+console.log("Stocks URI:", process.env.MONGO_STOCKS);
+
 const express = require("express");
 const mongoose = require("mongoose");
 
@@ -8,30 +11,25 @@ app.use(express.json()); // Parse JSON body
 // -----------------------------
 // Connect to multiple databases
 // -----------------------------
-const usersConn = mongoose.createConnection(process.env.MONGO_USERS, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
+const usersConn = mongoose.createConnection(process.env.MONGO_USERS);
 
-const stocksConn = mongoose.createConnection(process.env.MONGO_STOCKS, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
+const stocksConn = mongoose.createConnection(process.env.MONGO_STOCKS);
 
 // -----------------------------
 // Create models on each connection
 // -----------------------------
-const kids = usersConn.model("kids_auth");
-const parent = usersConn.model("parent_auth");
-const historicaltasks = usersConn.model("historical_tasks");
-const family = usersConn.model("family_ids");
-const stocksperuser = usersConn.model("stocks_per_user");
-const tasks = usersConn.model("tasks");
+const kids = usersConn.model("kids_auth", new mongoose.Schema({}, { strict: false }));
+const parent = usersConn.model("parent_auth", new mongoose.Schema({}, { strict: false }));
+const historicaltasks = usersConn.model("historical_tasks", new mongoose.Schema({}, { strict: false }));
+const family = usersConn.model("family_ids", new mongoose.Schema({}, { strict: false }));
+const stocksperuser = usersConn.model("stocks_per_user", new mongoose.Schema({}, { strict: false }));
+const tasks = usersConn.model("tasks", new mongoose.Schema({}, { strict: false }));
 
-const apple = stocksConn.model("apple");
-const banana = stocksConn.model("banana");
-const orange = stocksConn.model("orange");
-const strawberry = stocksConn.model("strawberry");
+const apple = stocksConn.model("apple", new mongoose.Schema({}, { strict: false }));
+const banana = stocksConn.model("banana", new mongoose.Schema({}, { strict: false }));
+const orange = stocksConn.model("orange", new mongoose.Schema({}, { strict: false }));
+const strawberry = stocksConn.model("strawberry", new mongoose.Schema({}, { strict: false }));
+
 
 // -----------------------------
 // Basic routes

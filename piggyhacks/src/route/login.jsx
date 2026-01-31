@@ -29,7 +29,7 @@ const INITIAL_EXPENSES = [
   { id: 3, category: 'Snack', amount: 5 },
 ];
 
-export default function App() {
+export default function LoginPage() {
     const [view, setView] = useState('login'); // login, kids_home, kids_tasks, parent_dashboard
     const [loginType, setLoginType] = useState('parent'); // parent or kids
     const [balance, setBalance] = useState(125.50);

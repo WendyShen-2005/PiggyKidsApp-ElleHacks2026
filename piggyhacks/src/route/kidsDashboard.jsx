@@ -1,7 +1,18 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { PiggyBank, User, TrendingUp, CheckSquare, Wheat, X, Send, Sparkles, Volume2 } from "lucide-react";
+import {
+  PiggyBank,
+  User,
+  TrendingUp,
+  CheckSquare,
+  Wheat,
+  X,
+  Send,
+  Sparkles,
+  Volume2,
+} from "lucide-react";
 import "../style/kidsDashboard.css";
+import TaskPiggy from "../components/taskPiggy.jsx";
 
 export default function KidsDashboard() {
   const navigate = useNavigate();
@@ -9,10 +20,19 @@ export default function KidsDashboard() {
   const [showPigChat, setShowPigChat] = useState(false);
   const [chatInput, setChatInput] = useState("");
   const [messages, setMessages] = useState([
-    { role: "pig", text: "Oink! I am your smart piggy bank. How can I help you save today?" }
+    {
+      role: "pig",
+      text: "Oink! I am your smart piggy bank. How can I help you save today?",
+    },
   ]);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+
+  const [tasks, setTasks] = useState([
+    { id: 1, title: "Clean the Room", status: "completed" },
+    { id: 2, title: "Wash the Dishes", status: "pending" },
+    { id: 3, title: "Feed the Dog", status: "pending" },
+  ]);
 
   const handleChat = (e) => {
     e.preventDefault();
@@ -23,10 +43,13 @@ export default function KidsDashboard() {
 
     // Simulate AI response
     setTimeout(() => {
-      setMessages(prev => [...prev, {
-        role: "pig",
-        text: "That sounds like a great plan! Remember to save your money wisely!"
-      }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "pig",
+          text: "That sounds like a great plan! Remember to save your money wisely!",
+        },
+      ]);
     }, 1000);
   };
 
@@ -45,7 +68,8 @@ export default function KidsDashboard() {
           <User size={20} />
         </button>
         <h2 className="kids-title">My Piggy Dashboard</h2>
-        <div className="kids-avatar"></div>
+        {/* <div className="kids-avatar"></div> */}
+        <TaskPiggy tasks={tasks} />
       </header>
 
       <main className="kids-main">
@@ -97,7 +121,7 @@ export default function KidsDashboard() {
         </div>
       </main>
 
-      {/* Floating AI Pig */}
+      {/* Floating AI Pig
       <button
         onClick={() => setShowPigChat(true)}
         className={`floating-pig ${isSpeaking ? "speaking" : "bouncing"}`}
@@ -106,9 +130,9 @@ export default function KidsDashboard() {
           <Sparkles size={12} /> ASK ME!
         </div>
         <PiggyBank size={40} className="floating-icon" />
-      </button>
+      </button> */}
 
-      {/* AI Pig Chat Modal */}
+      {/* AI Pig Chat Modal
       {showPigChat && (
         <div className="pig-chat-overlay">
           <div className="pig-chat-modal">
@@ -117,17 +141,29 @@ export default function KidsDashboard() {
                 <PiggyBank size={24} className="text-pink-500" />
                 <span>Smart Piggy</span>
               </div>
-              <button onClick={() => setShowPigChat(false)} className="close-btn">
+              <button
+                onClick={() => setShowPigChat(false)}
+                className="close-btn"
+              >
                 <X size={20} />
               </button>
             </div>
             <div className="pig-chat-messages">
               {messages.map((m, i) => (
-                <div key={i} className={`message-wrapper ${m.role === "user" ? "user" : "pig"}`}>
-                  <div className={`message-box ${m.role === "user" ? "user-msg" : "pig-msg"}`}>
+                <div
+                  key={i}
+                  className={`message-wrapper ${m.role === "user" ? "user" : "pig"}`}
+                >
+                  <div
+                    className={`message-box ${m.role === "user" ? "user-msg" : "pig-msg"}`}
+                  >
                     {m.text}
                     {m.role === "pig" && (
-                      <button onClick={() => playTTS(m.text)} className="tts-btn" disabled={isSpeaking}>
+                      <button
+                        onClick={() => playTTS(m.text)}
+                        className="tts-btn"
+                        disabled={isSpeaking}
+                      >
                         <Volume2 size={14} />
                       </button>
                     )}
@@ -149,6 +185,7 @@ export default function KidsDashboard() {
           </div>
         </div>
       )}
+    </div> */}
     </div>
   );
 }

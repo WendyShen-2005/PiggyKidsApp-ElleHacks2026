@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { PiggyBank, User, PlusCircle, MoreVertical } from "lucide-react";
+import {
+  PiggyBank,
+  User,
+  PlusCircle,
+  MoreVertical,
+  TrendingUp,
+} from "lucide-react";
 import "../style/parentDashboard.css";
+import TaskPiggy from "../components/taskPiggy.jsx";
 
 const INITIAL_TASKS = [
   { id: 1, title: "Clean the Room", amount: 5, status: "pending" },
@@ -22,28 +29,28 @@ export default function ParentDashboard() {
   const [balance, setBalance] = useState(50);
 
   const confirmTask = (taskId) => {
-    setTasks(prev =>
-      prev.map(task => (task.id === taskId ? { ...task, status: "confirmed" } : task))
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === taskId ? { ...task, status: "confirmed" } : task,
+      ),
     );
   };
 
   const handleAddExpense = (category, amount) => {
-    setExpenses(prev => [...prev, { id: Date.now(), category, amount }]);
-    setBalance(prev => prev - amount);
+    setExpenses((prev) => [...prev, { id: Date.now(), category, amount }]);
+    setBalance((prev) => prev - amount);
   };
 
   return (
     <div className="parent-container">
       {/* Header */}
       <header className="parent-header">
-        <div className="header-left">
+        <button onClick={() => navigate("/")} className="profile-btn">
           <User size={20} />
-          <h1 className="header-title">Parent Hub</h1>
-        </div>
-
-        <button className="logout-btn" onClick={() => navigate("/")}>
-          LOGOUT
         </button>
+        <h2 className="header-title">Parent Dashboard</h2>
+        {/* <div className="kids-avatar"></div> */}
+        <TaskPiggy tasks={tasks} />
       </header>
 
       <main className="parent-main">
@@ -53,6 +60,34 @@ export default function ParentDashboard() {
           <h2 className="balance-amount">${balance.toFixed(2)}</h2>
           <PiggyBank size={120} className="balance-bg-icon" />
         </section>
+
+        {/* Interest Graph */}
+        <div className="interest-card">
+          <div className="interest-header">
+            <h3 className="interest-title">
+              <TrendingUp size={16} /> My Interest Growth
+            </h3>
+            <span className="growth-percent">+4.2%</span>
+          </div>
+          <div className="graph">
+            {[45, 65, 55, 85, 110, 130].map((h, i) => (
+              <div key={i} className="bar-wrapper">
+                <div className="bar" style={{ height: `${h}%` }}>
+                  <div className="tooltip">
+                    <p className="week">Week {i + 1}</p>
+                    <p className="amount">+${(h * 0.1).toFixed(2)}</p>
+                  </div>
+                  <div className="bar-label">${(h * 0.1).toFixed(0)}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="graph-labels">
+            <span>Month 1</span>
+            <span>Month 2</span>
+            <span>Current</span>
+          </div>
+        </div>
 
         {/* Tasks */}
         <section className="tasks-section">
@@ -67,7 +102,10 @@ export default function ParentDashboard() {
                 <div className="task-footer">
                   <span className="task-amount">${task.amount}</span>
                   {task.status === "completed" && (
-                    <button className="confirm-btn" onClick={() => confirmTask(task.id)}>
+                    <button
+                      className="confirm-btn"
+                      onClick={() => confirmTask(task.id)}
+                    >
                       CONFIRM
                     </button>
                   )}
@@ -96,7 +134,9 @@ export default function ParentDashboard() {
             {expenses.map((exp) => (
               <div key={exp.id} className="expense-item">
                 <span>{exp.category}</span>
-                <span className="expense-amount">-${exp.amount.toFixed(2)}</span>
+                <span className="expense-amount">
+                  -${exp.amount.toFixed(2)}
+                </span>
               </div>
             ))}
           </div>

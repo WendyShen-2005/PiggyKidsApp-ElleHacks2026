@@ -1,0 +1,31 @@
+.task-piggy {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.piggy-icon {
+  color: #f472b6;
+  position: absolute;
+  width: 80px;
+  height: 80px;
+}
+
+.piggy-face {
+  position: absolute;
+  top: 22px;
+  color: #fff;
+}
+
+.piggy-face.happy {
+  color: #16a34a; /* green */
+}
+
+.piggy-face.sad {
+  color: #dc2626; /* red */
+}

@@ -21,12 +21,18 @@
   gap: 25px;
   border: 2px solid #dbeafe;
 }
+.kids-title {
+  font-weight: 900;
+  color: #db2777;
+  text-align: center;
+}
 
 /* Header */
 .tasks-header {
   text-align: center;
   position: relative;
 }
+
 
 .tasks-header h2 {
   font-size: 24px;
@@ -218,6 +224,17 @@
 .cancel-btn:hover {
   background-color: #f1f5f9;
 }
+.menu-item {
+  padding: 6px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.menu-item:hover {
+  background-color: #f1f5f9;
+}
+
 
 /* Monthly statement button */
 .statement-btn {

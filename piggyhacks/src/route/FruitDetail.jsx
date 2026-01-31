@@ -55,8 +55,11 @@ const FruitDetail = () => {
       <div className="tasks-card">
         {/* Header */}
         <div className="tasks-header">
-            <div className="flex-left-align">
-            <div className="back-btn">  <Link to="/stock-farm">⬅️ Farm Market</Link></div>
+          <div className="flex-center-align">
+            <Link to="/stock-farm" className="kids-title">
+              My Stock Farm
+            </Link>
+            {/* <div className="back-btn">  <Link to="/stock-farm">⬅️ Farm Market</Link></div> */}
             </div>
           <div className="pig-icon">🍎</div>
           <h2>{fruitName}</h2>

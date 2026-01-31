@@ -6,6 +6,8 @@ import {
   PlusCircle,
   MoreVertical,
   TrendingUp,
+  Plus,
+  X,
 } from "lucide-react";
 import "../style/parentDashboard.css";
 import TaskPiggy from "../components/taskPiggy.jsx";
@@ -27,7 +29,77 @@ export default function ParentDashboard() {
   const [tasks, setTasks] = useState(INITIAL_TASKS);
   const [expenses, setExpenses] = useState(INITIAL_EXPENSES);
   const [balance, setBalance] = useState(50);
+  const [editExpense, setEditExpense] = useState(null);
 
+  const [menuOpen, setMenuOpen] = useState(null);
+  const [editTask, setEditTask] = useState(null); // task being edited
+
+  // Inside ParentDashboard component, after your states:
+  const [summary, setSummary] = useState([]); // Daily summary logs
+
+  // Helper: format today's date
+  const isToday = (dateStr) => {
+    const d = new Date(dateStr);
+    const today = new Date();
+    return (
+      d.getDate() === today.getDate() &&
+      d.getMonth() === today.getMonth() &&
+      d.getFullYear() === today.getFullYear()
+    );
+  };
+
+  //   // Whenever a task is confirmed (done)
+  //   const confirmTask = (taskId) => {
+  //     setTasks((prev) =>
+  //       prev.map((task) => {
+  //         if (task.id === taskId) {
+  //           const updatedTask = {
+  //             ...task,
+  //             status: "confirmed",
+  //             completedAt: new Date().toISOString(),
+  //           };
+
+  //           // Add to daily summary log
+  //           setSummary((prevSummary) => [
+  //             ...prevSummary,
+  //             {
+  //               type: "task",
+  //               title: updatedTask.title,
+  //               amount: updatedTask.amount,
+  //               createdAt: updatedTask.completedAt,
+  //             },
+  //           ]);
+
+  //           return updatedTask;
+  //         }
+  //         return task;
+  //       }),
+  //     );
+  //   };
+
+  // When adding a new expense
+  const saveExpense = (expense) => {
+    setExpenses((prev) => [...prev, expense]);
+    setBalance((prev) => prev - expense.amount);
+
+    // Add to daily summary log
+    setSummary((prevSummary) => [
+      ...prevSummary,
+      {
+        type: "expense",
+        title: expense.category,
+        amount: expense.amount,
+        createdAt: expense.createdAt,
+      },
+    ]);
+  };
+
+  const addTask = () => {
+    setTasks((prev) => [
+      ...prev,
+      { id: Date.now(), title: "New Task", amount: 5, status: "pending" },
+    ]);
+  };
   const confirmTask = (taskId) => {
     setTasks((prev) =>
       prev.map((task) =>
@@ -35,12 +107,19 @@ export default function ParentDashboard() {
       ),
     );
   };
-
-  const handleAddExpense = (category, amount) => {
-    setExpenses((prev) => [...prev, { id: Date.now(), category, amount }]);
-    setBalance((prev) => prev - amount);
+  const saveTask = (id, newTitle, newAmount) => {
+    setTasks((prev) =>
+      prev.map((t) =>
+        t.id === id ? { ...t, title: newTitle, amount: Number(newAmount) } : t,
+      ),
+    );
+    setEditTask(null);
   };
 
+  const removeTask = (id) => {
+    setTasks((prev) => prev.filter((t) => t.id !== id));
+    setMenuOpen(null);
+  };
   return (
     <div className="parent-container">
       {/* Header */}
@@ -91,55 +170,352 @@ export default function ParentDashboard() {
 
         {/* Tasks */}
         <section className="tasks-section">
-          <h3 className="section-title">Active Tasks</h3>
-          <div className="tasks-list">
-            {tasks.map((task) => (
-              <div key={task.id} className={`task-card ${task.status}`}>
-                <div className="task-header">
-                  <p className="task-title">{task.title}</p>
+          <div
+            className="tasks-header"
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <h3>Active Tasks</h3>
+            <button className="statement-btn" onClick={addTask}>
+              <Plus size={16} /> Quick Add
+            </button>
+          </div>
+
+          <div className="task-notes">
+            {tasks.slice(0, 4).map((task) => (
+              <div key={task.id} className={`task-note ${task.status}`}>
+                <div className="thumbtack"></div>
+
+                {/* 3-dot menu */}
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 8,
+                    right: 8,
+                    cursor: "pointer",
+                  }}
+                  onClick={() =>
+                    setMenuOpen(menuOpen === task.id ? null : task.id)
+                  }
+                >
                   <MoreVertical size={16} />
                 </div>
-                <div className="task-footer">
-                  <span className="task-amount">${task.amount}</span>
-                  {task.status === "completed" && (
-                    <button
-                      className="confirm-btn"
-                      onClick={() => confirmTask(task.id)}
-                    >
-                      CONFIRM
-                    </button>
-                  )}
-                </div>
+
+                {/* Dropdown menu */}
+                {menuOpen === task.id && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: 30,
+                      right: 8,
+                      background: "white",
+                      borderRadius: 10,
+                      boxShadow: "0 5px 15px rgba(0,0,0,0.15)",
+                      padding: 8,
+                      zIndex: 5,
+                    }}
+                  >
+                    {task.status === "pending" && (
+                      <>
+                        <div
+                          className="menu-item"
+                          onClick={() => setEditTask(task)}
+                        >
+                          Modify
+                        </div>
+                        <div
+                          className="menu-item"
+                          onClick={() => removeTask(task.id)}
+                        >
+                          Remove
+                        </div>
+                      </>
+                    )}
+                    {task.status === "completed" && (
+                      <>
+                        <div
+                          className="menu-item"
+                          onClick={() => confirmTask(task.id)}
+                        >
+                          Confirm
+                        </div>
+                        <div
+                          className="menu-item"
+                          onClick={() => removeTask(task.id)}
+                        >
+                          Remove
+                        </div>
+                        <div
+                          className="menu-item"
+                          onClick={() => navigate("/tasks/history")}
+                        >
+                          Go to History
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+
+                <h4>{task.title}</h4>
+                <span>${task.amount}</span>
               </div>
             ))}
           </div>
+
+          {/* See More Button */}
+          {tasks.length > 4 && (
+            <button
+              className="see-more-btn"
+              onClick={() => navigate("/parent-tasks")}
+            >
+              See More Tasks
+            </button>
+          )}
+
+          {/* Edit Task Popup */}
+          {editTask && (
+            <div className="popup-overlay">
+              <div className="popup-card">
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <h3>Edit Task</h3>
+                  <X
+                    size={20}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => setEditTask(null)}
+                  />
+                </div>
+
+                <div className="proof-row">
+                  <label>Task Title</label>
+                  <input
+                    type="text"
+                    value={editTask.title}
+                    onChange={(e) =>
+                      setEditTask({ ...editTask, title: e.target.value })
+                    }
+                  />
+                </div>
+
+                <div className="proof-row">
+                  <label>Amount ($)</label>
+                  <input
+                    type="number"
+                    value={editTask.amount}
+                    onChange={(e) =>
+                      setEditTask({ ...editTask, amount: e.target.value })
+                    }
+                  />
+                </div>
+
+                <div className="popup-buttons">
+                  <button
+                    className="cancel-btn"
+                    onClick={() => setEditTask(null)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="upload-btn"
+                    onClick={() =>
+                      saveTask(editTask.id, editTask.title, editTask.amount)
+                    }
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </section>
 
         {/* Expenses */}
+        {/* Expenses Section */}
         <section className="expenses-section">
-          <h3 className="section-title">Deduct Expenses</h3>
-          <div className="expense-btns">
-            {["Toys", "Candy", "Snack"].map((cat) => (
-              <button
-                key={cat}
-                className="expense-btn"
-                onClick={() => handleAddExpense(cat, 5)}
-              >
-                <PlusCircle size={14} />
-                {cat}
-              </button>
-            ))}
+          <div
+            className="tasks-header"
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <h3>Expenses</h3>
+            <button
+              className="expense-btn"
+              onClick={() => setEditExpense({ name: "", amount: 0 })}
+            >
+              <Plus size={16} /> Add Expense
+            </button>
           </div>
+
+          {/* Expense sticky notes */}
           <div className="expenses-list">
             {expenses.map((exp) => (
               <div key={exp.id} className="expense-item">
                 <span>{exp.category}</span>
-                <span className="expense-amount">
-                  -${exp.amount.toFixed(2)}
-                </span>
+                <span className="expense-amount">${exp.amount.toFixed(2)}</span>
+
+                {/* 3-dot menu for Modify / Remove */}
+                <div
+                  style={{ cursor: "pointer" }}
+                  onClick={() =>
+                    setMenuOpen(
+                      menuOpen === `exp-${exp.id}` ? null : `exp-${exp.id}`,
+                    )
+                  }
+                >
+                  <MoreVertical size={16} />
+                </div>
+
+                {menuOpen === `exp-${exp.id}` && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      background: "white",
+                      borderRadius: 10,
+                      boxShadow: "0 5px 15px rgba(0,0,0,0.15)",
+                      padding: 8,
+                      zIndex: 5,
+                      right: 10,
+                      top: 40,
+                    }}
+                  >
+                    <div
+                      className="menu-item"
+                      onClick={
+                        () => setEditExpense({ ...exp, id: exp.id }) // load expense into popup
+                      }
+                    >
+                      Modify
+                    </div>
+                    <div
+                      className="menu-item"
+                      onClick={() =>
+                        setExpenses((prev) =>
+                          prev.filter((e) => e.id !== exp.id),
+                        )
+                      }
+                    >
+                      Remove
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
+
+          {/* Add / Edit Expense Popup */}
+          {editExpense && (
+            <div className="popup-overlay">
+              <div className="popup-card">
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <h3>{editExpense.id ? "Edit Expense" : "Add Expense"}</h3>
+                  <X
+                    size={20}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => setEditExpense(null)}
+                  />
+                </div>
+
+                <div className="proof-row">
+                  <label>Expense Name</label>
+                  <input
+                    type="text"
+                    value={editExpense.name}
+                    onChange={(e) =>
+                      setEditExpense({ ...editExpense, name: e.target.value })
+                    }
+                  />
+                </div>
+
+                <div className="proof-row">
+                  <label>Amount ($)</label>
+                  <input
+                    type="number"
+                    value={editExpense.amount}
+                    onChange={(e) =>
+                      setEditExpense({
+                        ...editExpense,
+                        amount: Number(e.target.value),
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="popup-buttons">
+                  <button
+                    className="cancel-btn"
+                    onClick={() => setEditExpense(null)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="upload-btn"
+                    onClick={() => {
+                      if (editExpense.id) {
+                        // Modify existing
+                        setExpenses((prev) =>
+                          prev.map((e) =>
+                            e.id === editExpense.id
+                              ? {
+                                  ...e,
+                                  category: editExpense.name,
+                                  amount: editExpense.amount,
+                                }
+                              : e,
+                          ),
+                        );
+                      } else {
+                        // Add new
+                        setExpenses((prev) => [
+                          ...prev,
+                          {
+                            id: Date.now(),
+                            category: editExpense.name,
+                            amount: editExpense.amount,
+                            createdAt: new Date().toISOString(),
+                          },
+                        ]);
+                      }
+                      setBalance((prev) => prev - editExpense.amount);
+                      setEditExpense(null);
+                    }}
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </section>
+        <section className="daily-summary">
+          <h3>Today's Summary</h3>
+          <ul>
+            {summary
+              .filter((item) => isToday(item.createdAt))
+              .map((item, i) => (
+                <li key={i}>
+                  {item.type === "task"
+                    ? `Anna earned $${item.amount} from "${item.title}"`
+                    : `Anna spent $${item.amount} on "${item.title}"`}
+                </li>
+              ))}
+          </ul>
         </section>
       </main>
     </div>

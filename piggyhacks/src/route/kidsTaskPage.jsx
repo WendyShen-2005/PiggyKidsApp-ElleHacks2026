@@ -3,8 +3,7 @@ import { PiggyBank, Upload, FileText } from "lucide-react";
 import "../style/kidsTaskPage.css";
 import { Link } from "react-router-dom";
 
-
-export default function TasksPage() {
+export default function KidsTasksPage() {
   const [tasks, setTasks] = useState([
     { id: 1, title: "Clean your room", amount: 5, completed: false },
     { id: 2, title: "Feed the dog", amount: 3, completed: true },
@@ -21,9 +20,7 @@ export default function TasksPage() {
 
   const handleProofSubmit = () => {
     setTasks((prev) =>
-      prev.map((t) =>
-        t.id === activeTask.id ? { ...t, completed: true } : t
-      )
+      prev.map((t) => (t.id === activeTask.id ? { ...t, completed: true } : t)),
     );
     setActiveTask(null);
     setProofDate("");
@@ -35,9 +32,11 @@ export default function TasksPage() {
       <div className="tasks-card">
         {/* Header */}
         <div className="tasks-header">
-            <div className="flex-left-align">
-            <div className="back-btn">  <Link to="/kids-dashboard">⬅️ Dashboard</Link></div>
-            </div>
+          <div className="flex-center-align">
+            <Link to="/kids-dashboard" className="kids-title">
+              My Piggy Dashboard
+            </Link>{" "}
+          </div>
           <h2>TASKS</h2>
           <div className="pig-icon">
             <PiggyBank size={28} />
@@ -62,7 +61,12 @@ export default function TasksPage() {
               <div className="thumbtack" />
               <h4>{task.title}</h4>
               {!task.completed && <span>${task.amount}</span>}
-              {task.completed && <span>Payment confirmation of ${task.amount} pending! Congratulations!</span>}
+              {task.completed && (
+                <span>
+                  Payment confirmation of ${task.amount} pending!
+                  Congratulations!
+                </span>
+              )}
               {!task.completed && (
                 <button
                   className="complete-btn"

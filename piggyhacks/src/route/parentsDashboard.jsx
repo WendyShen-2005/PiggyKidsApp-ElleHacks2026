@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   PiggyBank,
@@ -12,11 +12,15 @@ import {
 import "../style/parentDashboard.css";
 import TaskPiggy from "../components/taskPiggy.jsx";
 
-const INITIAL_TASKS = [
-  { id: 1, title: "Clean the Room", amount: 5, status: "pending" },
-  { id: 2, title: "Wash the Dishes", amount: 3, status: "completed" },
-  { id: 3, title: "Feed the Dog", amount: 2, status: "pending" },
-];
+import axios from "axios";
+
+import AddTaskPopup from "../components/AddTaskPopup.jsx";
+
+// const INITIAL_TASKS = [
+//   { id: 1, title: "Clean the Room", amount: 5, status: "pending" },
+//   { id: 2, title: "Wash the Dishes", amount: 3, status: "completed" },
+//   { id: 3, title: "Feed the Dog", amount: 2, status: "pending" },
+// ];
 
 const INITIAL_EXPENSES = [
   { id: 1, category: "Toys", amount: 15 },
@@ -26,16 +30,31 @@ const INITIAL_EXPENSES = [
 
 export default function ParentDashboard() {
   const navigate = useNavigate();
-  const [tasks, setTasks] = useState(INITIAL_TASKS);
+  const [tasks, setTasks] = useState([]);
   const [expenses, setExpenses] = useState(INITIAL_EXPENSES);
   const [balance, setBalance] = useState(50);
   const [editExpense, setEditExpense] = useState(null);
+
+  const [newTask, setNewTask] = useState(null);
+
 
   const [menuOpen, setMenuOpen] = useState(null);
   const [editTask, setEditTask] = useState(null); // task being edited
 
   // Inside ParentDashboard component, after your states:
   const [summary, setSummary] = useState([]); // Daily summary logs
+
+  useEffect(() => {
+  axios.get("http://localhost:5000/tasks")
+    .then(res => {
+      if (Array.isArray(res.data)) {
+        setTasks(res.data);
+      } else {
+        setTasks([]);
+      }
+    })
+    .catch(err => console.error(err));
+}, []);
 
   // Helper: format today's date
   const isToday = (dateStr) => {
@@ -94,19 +113,6 @@ export default function ParentDashboard() {
     ]);
   };
 
-  const addTask = () => {
-    setTasks((prev) => [
-      ...prev,
-      { id: Date.now(), title: "New Task", amount: 5, status: "pending" },
-    ]);
-  };
-  const confirmTask = (taskId) => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === taskId ? { ...task, status: "confirmed" } : task,
-      ),
-    );
-  };
   const saveTask = (id, newTitle, newAmount) => {
     setTasks((prev) =>
       prev.map((t) =>
@@ -179,14 +185,18 @@ export default function ParentDashboard() {
             }}
           >
             <h3>Active Tasks</h3>
-            <button className="statement-btn" onClick={addTask}>
-              <Plus size={16} /> Quick Add
+            <button
+              className="statement-btn"
+              onClick={() => setNewTask({ title: "", amount: "" })}
+            >
+              <Plus size={16} /> Add Task
             </button>
+
           </div>
 
           <div className="task-notes">
             {tasks.slice(0, 4).map((task) => (
-              <div key={task.id} className={`task-note ${task.status}`}>
+              <div key={task.id} className={`task-note ${task.completed ? "completed" : ""}`}>
                 <div className="thumbtack"></div>
 
                 {/* 3-dot menu */}
@@ -218,7 +228,7 @@ export default function ParentDashboard() {
                       zIndex: 5,
                     }}
                   >
-                    {task.status === "pending" && (
+                    {task.completed === false && (
                       <>
                         <div
                           className="menu-item"
@@ -234,14 +244,14 @@ export default function ParentDashboard() {
                         </div>
                       </>
                     )}
-                    {task.status === "completed" && (
+                    {task.completed === true && (
                       <>
-                        <div
+                        {/* <div
                           className="menu-item"
                           onClick={() => confirmTask(task.id)}
                         >
                           Confirm
-                        </div>
+                        </div> */}
                         <div
                           className="menu-item"
                           onClick={() => removeTask(task.id)}
@@ -269,7 +279,7 @@ export default function ParentDashboard() {
           {tasks.length > 4 && (
             <button
               className="see-more-btn"
-              onClick={() => navigate("/parent-tasks")}
+              onClick={() => navigate("/parent-tasks", { state: { tasks } })}
             >
               See More Tasks
             </button>
@@ -518,6 +528,26 @@ export default function ParentDashboard() {
           </ul>
         </section>
       </main>
+      <AddTaskPopup
+        newTask={newTask}
+        setNewTask={setNewTask}
+        onSubmit={() => {
+          if (!newTask.title || !newTask.amount) return;
+
+          setTasks((prev) => [
+            ...prev,
+            {
+              id: Date.now(),
+              title: newTask.title,
+              amount: Number(newTask.amount),
+              completed: false,
+            },
+          ]);
+
+          setNewTask(null);
+        }}
+      />
+
     </div>
   );
 }

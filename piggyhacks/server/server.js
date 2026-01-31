@@ -111,7 +111,7 @@ app.get("/stocksperuser", async (req, res) => {
 app.get("/tasks", async (req, res) => {
   try {
     const allTasks = await tasks.find();
-    res.json(allTasks[0].tasks_lists[0].tasks);
+    res.json(allTasks[0].tasks_lists);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -158,6 +158,30 @@ app.get("/stocks/strawberry", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+app.post("/tasks/:docId/add", async (req, res) => {
+  try {
+    const { docId } = req.params;
+    const newTask = req.body;
+
+    const result = await tasks.updateOne(
+      { _id: new mongoose.Types.ObjectId(docId) },
+      {
+        $push: {
+          tasks_lists: newTask
+        }
+      }
+    );
+
+    res.json({
+      message: "Task added successfully",
+      result
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 // -----------------------------
 // Start server

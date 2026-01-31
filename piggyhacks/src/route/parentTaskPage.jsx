@@ -1,15 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MoreVertical, Plus, X } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "../style/kidsTaskPage.css";
 
 export default function ParentTaskPage() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [tasks, setTasks] = useState([
     { id: 1, title: "Clean the Room", amount: 5, status: "pending" },
     { id: 2, title: "Wash the Dishes", amount: 3, status: "completed" },
   ]);
+
+  // Load tasks from navigation state if available
+  useEffect(() => {
+    if (location.state?.tasks) {
+      setTasks(location.state.tasks);
+    }
+  }, [location.state?.tasks]);
 
   const [menuOpen, setMenuOpen] = useState(null);
   const [editTask, setEditTask] = useState(null); // task being edited

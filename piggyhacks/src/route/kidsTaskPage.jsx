@@ -1,14 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { PiggyBank, Upload, FileText } from "lucide-react";
 import "../style/kidsTaskPage.css";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 export default function KidsTasksPage() {
-  const [tasks, setTasks] = useState([
-    { id: 1, title: "Clean your room", amount: 5, completed: false },
-    { id: 2, title: "Feed the dog", amount: 3, completed: true },
-    { id: 3, title: "Do homework", amount: 4, completed: false },
-  ]);
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+  axios.get("http://localhost:5000/tasks")
+    .then(res => {
+      if (Array.isArray(res.data)) {
+        setTasks(res.data);
+      } else {
+        setTasks([]);
+      }
+    })
+    .catch(err => console.error(err));
+}, []);
+
 
   const [activeTask, setActiveTask] = useState(null);
   const [proofDate, setProofDate] = useState("");

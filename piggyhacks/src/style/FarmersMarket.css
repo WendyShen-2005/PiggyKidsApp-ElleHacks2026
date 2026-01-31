@@ -1,3 +1,22 @@
+.tasks-page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.tasks-card {
+  width: 100%;
+  max-width: 1200px;   /* keeps it clean on very large screens */
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+.kids-title {
+  font-weight: 900;
+  color: #db2777;
+}
+.tasks-chart {
+  width: 100%;
+}
 /* Time range buttons container */
 .time-range-buttons {
   display: flex;

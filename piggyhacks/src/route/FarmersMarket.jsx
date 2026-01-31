@@ -98,18 +98,23 @@ const FarmersMarket = () => {
   };
 
   const fruits = [
-    { name: "Apple Tree", ticker: "AAPL", data: apple },
-    { name: "Banana Grove", ticker: "BNNA", data: banana },
-    { name: "Orange Orchard", ticker: "ORNG", data: orange },
-    { name: "Strawberry Patch", ticker: "STRB", data: strawberry },
+    { name: "apple", ticker: "AAPL", data: apple },
+    { name: "banana", ticker: "BNNA", data: banana },
+    { name: "orange", ticker: "ORNG", data: orange },
+    { name: "strawberry", ticker: "STRB", data: strawberry },
   ];
 
   return (
     <div className="tasks-page">
-      <div className="tasks-card" style={{ maxWidth: "600px", width: "100%" }}>
+      <div className="tasks-card">
         <div className="flex-center-align">
-            <div className="back-btn">  <Link to="/kids-dashboard">⬅️ Dashboard</Link></div>
-            </div>
+          <div className="flex-center-align">
+            <Link to="/kids-dashboard" className="kids-title">
+              My Piggy Dashboard
+            </Link>
+          </div>
+            {/* <div className="back-btn">  <Link to="/kids-dashboard">⬅️ Dashboard</Link></div> */} 
+        </div>
         {/* Available to invest */}
         <div className="available-card">
           <p className="available-label">Available to Invest</p>
@@ -135,7 +140,10 @@ const FarmersMarket = () => {
           </ResponsiveContainer>
 
           {/* Time range buttons */}
-          <div className="time-range-buttons" style={{ display: "flex", gap: "8px", marginTop: "10px" }}>
+          <div
+            className="time-range-buttons"
+            style={{ display: "flex", gap: "8px", marginTop: "10px" }}
+          >
             {["week", "month", "year", "all"].map((range) => (
               <button
                 key={range}
@@ -157,12 +165,15 @@ const FarmersMarket = () => {
               <div key={fruit.name} className="fruit-stock-card">
                 <div className="fruit-info">
                   <p className="fruit-name">
-                    {fruit.name} <span className="ticker">({fruit.ticker})</span>
+                    {fruit.name}{" "}
+                    <span className="ticker">({fruit.ticker})</span>
                   </p>
                   <p className="fruit-price">${latestPrice(fruit.data)}</p>
                 </div>
                 <div className="fruit-actions">
-                  <p className={`percent-change ${change >= 0 ? "up" : "down"}`}>
+                  <p
+                    className={`percent-change ${change >= 0 ? "up" : "down"}`}
+                  >
                     {change >= 0 ? "▲" : "▼"} {Math.abs(change)}%
                   </p>
                   <button

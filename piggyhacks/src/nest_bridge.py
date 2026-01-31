@@ -4,15 +4,21 @@ from testing import pig_speak  # This is your ElevenLabs function
 import os
 from dotenv import load_dotenv
 from pymongo import MongoClient
+import google.generativeai as genai
+
+# Setup Gemini
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+model = genai.GenerativeModel('gemini-2.5-flash')
 
 # Load secrets from .env
 load_dotenv()
 MONGO_URI = os.getenv("MONGO_URI")
 client = MongoClient(MONGO_URI)
 db = client["userLog"]
-collection = db["userLog"]
+collection = db["FinaluserLog"]
 # 2. Define the collection globally (outside the try block)
-phrases_col = db["userLog"]
+phrases_col = db["FinaluserLog"]
+current_balance = 50.0  # Example balance
 
 # Setup MongoDB
 try:
@@ -43,6 +49,28 @@ def get_all_phrases():
         print(f"❌ Error fetching all documents: {e}")
         return "Oink! I had a connection error while trying to read everything."
 
+def get_child_friendly_message(raw_logs, current_balance):
+    # Systems Logic: Calculate interest (e.g., 1% daily for the demo)
+    interest_rate = 0.05  # 5% daily interest for demonstration
+    daily_interest = current_balance * interest_rate
+    
+    # The Prompt: This is where you tell Gemini how to behave
+    prompt = f"""
+    You are a friendly, magical piggy bank. 
+    At the start, tell the child: The piggy bank has a balance of ${current_balance:.2f}
+    Then tell them the following:
+    '{raw_logs}'
+
+    Make sure to highlight the importance of saving money and sound disapointed if they spend more than 50% of their balance.
+    
+    At the end, tell them: 'You will earn 
+    ${daily_interest:.2f} in interest today due to your savings and spendings today!'
+    Keep it short and use oinks!
+    """
+    
+    response = model.generate_content(prompt)
+    return response.text
+
 # --- 1. SET YOUR PORT ---
 # Look in Arduino IDE -> Tools -> Port. 
 # Windows: 'COM3' | Mac: '/dev/cu.usbmodem...'
@@ -64,14 +92,16 @@ while True:
         data = arduino.readline().decode('utf-8').strip()
         
         if data == "TILT_DETECTED":
-            print("🚨 Tilt detected! Reading all database records...")
+            # 1. Get raw sentences from MongoDB
+            raw_text = get_all_phrases() 
             
-            # Fetch the long combined string
-            full_message = get_all_phrases()
+            # 2. Get current balance (assume 50 for now, or fetch from DB)
+            balance = 50 
             
-            print(f"🤖 Full message: {full_message}")
+            # 3. Gemini "Middleman" rewrites it
+            final_script = get_child_friendly_message(raw_text, balance)
             
-            # Send the whole thing to ElevenLabs
-            pig_speak(full_message)
+            print(f"✨ Gemini transformed: {final_script}")
             
-            print("✅ Full reading complete.")
+            # 4. Speak the AI-generated version
+            pig_speak(final_script)

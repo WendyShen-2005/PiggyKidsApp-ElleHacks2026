@@ -1,0 +1,258 @@
+/* Full screen center */
+.tasks-page {
+  min-height: 100vh;
+  background-color: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Card */
+.tasks-card {
+  background: white;
+  padding: 40px;
+  border-radius: 24px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  border: 2px solid #dbeafe;
+}
+
+/* Header */
+.tasks-header {
+  text-align: center;
+  position: relative;
+}
+
+.tasks-header h2 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1e293b;
+  margin-bottom: 10px;
+}
+
+.pig-icon {
+  background-color: #fce7f3;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  border: 3px solid #fbcfe8;
+  color: #ec4899;
+}
+
+/* Total box */
+.total-box {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: #2563eb;
+  padding: 12px 0;
+  border-radius: 14px;
+  background-color: #e0f2fe;
+  border: 1px solid #bae6fd;
+}
+
+/* Sticky notes grid */
+.task-notes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+/* Individual sticky note */
+.task-note {
+  position: relative;
+  width: 140px;
+  min-height: 120px;
+  background: #fef9c3;
+  border-radius: 12px;
+  padding: 14px 10px 10px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  transform: rotate(-1deg); /* slight tilt for realism */
+}
+
+.task-note.completed {
+  background: #dcfce7;
+  border-color: #86efac;
+}
+
+.task-note h4 {
+  font-size: 14px;
+  margin: 0 0 6px;
+  color: #92400e;
+}
+
+.task-note span {
+  font-weight: 700;
+  color: #a16207;
+}
+
+/* Thumb tack */
+.thumbtack {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 14px;
+  background: #ef4444;
+  border-radius: 50%;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Complete button */
+.complete-btn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 6px;
+  border-radius: 10px;
+  border: none;
+  background-color: #2563eb;
+  color: white;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.complete-btn:hover {
+  background-color: #1d4ed8;
+}
+
+/* Popup overlay */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+/* Popup card */
+.popup-card {
+  background: white;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Proof row */
+.proof-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.proof-row label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.proof-row input {
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  outline: none;
+  font-size: 14px;
+}
+
+.proof-row input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+/* Popup buttons */
+.popup-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.upload-btn {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: none;
+  background-color: #2563eb;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.upload-btn:hover {
+  background-color: #1d4ed8;
+}
+
+.cancel-btn {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background-color: white;
+  color: #475569;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cancel-btn:hover {
+  background-color: #f1f5f9;
+}
+
+/* Monthly statement button */
+.statement-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  background-color: #ec4899;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.statement-btn:hover {
+  background-color: #be185d;
+}
+
+.flex-left-align {
+  display: flex;
+  align-items: center;
+}
+
+
+.back-btn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 6px;
+  border-radius: 10px;
+  color: #2563eb;
+  font-weight: 600;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}

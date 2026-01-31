@@ -98,10 +98,10 @@ const FarmersMarket = () => {
   };
 
   const fruits = [
-    { name: "Apple Tree", ticker: "AAPL", data: apple },
-    { name: "Banana Grove", ticker: "BNNA", data: banana },
-    { name: "Orange Orchard", ticker: "ORNG", data: orange },
-    { name: "Strawberry Patch", ticker: "STRB", data: strawberry },
+    { name: "apple", ticker: "AAPL", data: apple },
+    { name: "banana", ticker: "BNNA", data: banana },
+    { name: "orange", ticker: "ORNG", data: orange },
+    { name: "strawberry", ticker: "STRB", data: strawberry },
   ];
 
   return (

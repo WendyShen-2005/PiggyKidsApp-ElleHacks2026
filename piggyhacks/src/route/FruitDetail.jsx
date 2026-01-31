@@ -13,7 +13,19 @@ import {
 import { useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
 
+import { useEffect } from "react";
+import axios from "axios";
+
 const FruitDetail = () => {
+
+  const [fruitsData, setFruitsData] = useState([]);
+
+   useEffect(() => {
+    axios.get(`http://localhost:5000/stocks/apple`)
+      .then(res => setFruitsData(res.data))
+      .catch(err => console.error(err));
+  }, []);
+
   // Grab passed state from navigation
   const location = useLocation();
   const { fruitName, fruitData } = location.state;
@@ -21,7 +33,7 @@ const FruitDetail = () => {
   const [timeRange, setTimeRange] = useState("all");
 
   const getFilteredData = () => {
-    let days = fruitData.length;
+    let days = fruitsData.length;
 
     switch (timeRange) {
       case "week":
@@ -34,21 +46,21 @@ const FruitDetail = () => {
         days = 365;
         break;
       default:
-        days = fruitData.length;
+        days = fruitsData.length;
     }
 
-    return fruitData.slice(-days);
+    return fruitsData.slice(-days);
   };
 
   const mostRecentPrice =
-    fruitData.length > 0
-      ? fruitData[fruitData.length - 1].price.toFixed(2)
+    fruitsData.length > 0
+      ? fruitsData[fruitsData.length - 1].price.toFixed(2)
       : "-";
 
   // Assume total # fruits is the number of days (for simplicity)
-  const totalFruits = fruitData.length;
-  const totalValue = (fruitData.reduce((acc, cur) => acc + cur.price, 0)).toFixed(2);
-  const profitLoss = (fruitData[fruitData.length - 1].price * totalFruits - totalValue).toFixed(2);
+  const totalFruits = fruitsData.length;
+  const totalValue = (fruitsData.reduce((acc, cur) => acc + cur.price, 0)).toFixed(2);
+  const profitLoss = (fruitsData[fruitsData.length - 1].price * totalFruits - totalValue).toFixed(2);
 
   return (
     <div className="tasks-page">

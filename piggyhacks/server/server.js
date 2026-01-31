@@ -12,24 +12,47 @@ app.use(express.json()); // Parse JSON body
 // Connect to multiple databases
 // -----------------------------
 const usersConn = mongoose.createConnection(process.env.MONGO_USERS);
+usersConn.on("connected", () => console.log("✅ Users DB connected"));
+usersConn.on("error", err => console.error("❌ Users DB connection error:", err));
 
 const stocksConn = mongoose.createConnection(process.env.MONGO_STOCKS);
+stocksConn.on("connected", () => console.log("✅ Stocks DB connected"));
+stocksConn.on("error", err => console.error("❌ Stocks DB connection error:", err));
+
+Promise.all([
+  new Promise((resolve, reject) => {
+    usersConn.once("open", resolve);
+    usersConn.once("error", reject);
+  }),
+  new Promise((resolve, reject) => {
+    stocksConn.once("open", resolve);
+    stocksConn.once("error", reject);
+  })
+])
+.then(() => {
+  console.log("Both DBs connected — starting server");
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+})
+.catch(err => {
+  console.error("Failed to connect to DBs:", err);
+  process.exit(1);
+});
 
 // -----------------------------
 // Create models on each connection
 // -----------------------------
-const kids = usersConn.model("kids_auth", new mongoose.Schema({}, { strict: false }));
-const parent = usersConn.model("parent_auth", new mongoose.Schema({}, { strict: false }));
-const historicaltasks = usersConn.model("historical_tasks", new mongoose.Schema({}, { strict: false }));
-const family = usersConn.model("family_ids", new mongoose.Schema({}, { strict: false }));
-const stocksperuser = usersConn.model("stocks_per_user", new mongoose.Schema({}, { strict: false }));
-const tasks = usersConn.model("tasks", new mongoose.Schema({}, { strict: false }));
+const kids = usersConn.model("KidsAuth", new mongoose.Schema({}, { strict: false }), "kids_auth");
+const parent = usersConn.model("ParentAuth", new mongoose.Schema({}, { strict: false }), "parent_auth");
+const historicaltasks = usersConn.model("HistoricalTasks", new mongoose.Schema({}, { strict: false }), "historical_tasks");
+const family = usersConn.model("FamilyIds", new mongoose.Schema({}, { strict: false }), "family_ids");
+const stocksperuser = usersConn.model("StocksPerUser", new mongoose.Schema({}, { strict: false }), "stocks_per_user");
+const tasks = usersConn.model("Tasks", new mongoose.Schema({}, { strict: false }), "tasks");
 
-const apple = stocksConn.model("apple", new mongoose.Schema({}, { strict: false }));
-const banana = stocksConn.model("banana", new mongoose.Schema({}, { strict: false }));
-const orange = stocksConn.model("orange", new mongoose.Schema({}, { strict: false }));
-const strawberry = stocksConn.model("strawberry", new mongoose.Schema({}, { strict: false }));
-
+const apple = stocksConn.model("Apple", new mongoose.Schema({}, { strict: false }), "apple");
+const banana = stocksConn.model("Banana", new mongoose.Schema({}, { strict: false }), "banana");
+const orange = stocksConn.model("Orange", new mongoose.Schema({}, { strict: false }), "orange");
+const strawberry = stocksConn.model("Strawberry", new mongoose.Schema({}, { strict: false }), "strawberry");
 
 // -----------------------------
 // Basic routes
@@ -97,6 +120,8 @@ app.get("/tasks", async (req, res) => {
 app.get("/stocks/apple", async (req, res) => {
   try {
     const data = await apple.find();
+    console.log("Apple data fetched:", data.length, "records");
+    console.log(data[0])
     res.json(data);
   } catch (err) {
     res.status(500).json({ error: err.message });

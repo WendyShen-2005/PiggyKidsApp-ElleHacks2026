@@ -1,0 +1,128 @@
+/* Time range buttons container */
+.time-range-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Make buttons equally sized */
+.time-range-buttons .complete-btn {
+  flex: 1;
+  padding: 10px 0;
+  font-size: 14px;
+}
+
+/* Highlight active button */
+.time-range-buttons .complete-btn.active {
+  background-color: #1d4ed8;
+  color: white;
+}
+
+/* Fruit buttons container (column) */
+.fruit-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+/* Make fruit buttons full width */
+.fruit-buttons .full-width {
+  width: 100%;
+}
+.available-card {
+  background: white;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.available-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+}
+
+.available-amount {
+  font-size: 28px;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.fruit-stock-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.fruit-stock-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  border-radius: 16px;
+  padding: 16px 20px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+  border-left: 6px solid #10b981; /* green border for all, can vary per fruit if desired */
+}
+
+.fruit-info .fruit-name {
+  font-weight: 700;
+  font-size: 16px;
+  color: #1e293b;
+}
+
+.fruit-info .ticker {
+  font-weight: 600;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.fruit-info .fruit-price {
+  font-size: 14px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+.fruit-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.percent-change.up {
+  color: #10b981;
+  font-weight: 700;
+}
+
+.percent-change.down {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+.invest-btn {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 8px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.invest-btn:hover {
+  background-color: #1d4ed8;
+}
+
+.flex-center-align {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

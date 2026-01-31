@@ -21,7 +21,7 @@ const FruitDetail = () => {
   const [fruitsData, setFruitsData] = useState([]);
 
    useEffect(() => {
-    axios.get(`http://localhost:5000/stocks/apple`)
+    axios.get(`http://localhost:5000/stocks/${fruitName}`)
       .then(res => setFruitsData(res.data))
       .catch(err => console.error(err));
   }, []);
@@ -52,15 +52,21 @@ const FruitDetail = () => {
     return fruitsData.slice(-days);
   };
 
-  const mostRecentPrice =
-    fruitsData.length > 0
-      ? fruitsData[fruitsData.length - 1].price.toFixed(2)
-      : "-";
+const mostRecentPrice =
+  fruitsData.length > 0
+    ? fruitsData[fruitsData.length - 1].price.toFixed(2)
+    : "-"; // fallback if no data
+
 
   // Assume total # fruits is the number of days (for simplicity)
   const totalFruits = fruitsData.length;
-  const totalValue = (fruitsData.reduce((acc, cur) => acc + cur.price, 0)).toFixed(2);
-  const profitLoss = (fruitsData[fruitsData.length - 1].price * totalFruits - totalValue).toFixed(2);
+  const totalValue = fruitsData.length > 0
+  ? fruitsData.reduce((acc, cur) => acc + cur.price, 0).toFixed(2)
+  : 0;
+
+const profitLoss = fruitsData.length > 0
+  ? (fruitsData[fruitsData.length - 1].price * fruitsData.length - totalValue).toFixed(2)
+  : 0;
 
   return (
     <div className="tasks-page">

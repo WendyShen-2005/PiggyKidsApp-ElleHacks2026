@@ -8,6 +8,9 @@ const mongoose = require("mongoose");
 const app = express();
 app.use(express.json()); // Parse JSON body
 
+const cors = require("cors");
+app.use(cors());
+
 // -----------------------------
 // Connect to multiple databases
 // -----------------------------

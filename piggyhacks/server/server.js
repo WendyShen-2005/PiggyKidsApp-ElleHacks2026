@@ -8,6 +8,9 @@ const mongoose = require("mongoose");
 const app = express();
 app.use(express.json()); // Parse JSON body
 
+const cors = require("cors");
+app.use(cors());
+
 // -----------------------------
 // Connect to multiple databases
 // -----------------------------
@@ -63,7 +66,7 @@ const strawberry = stocksConn.model("Strawberry", new mongoose.Schema({}, { stri
 app.get("/kids", async (req, res) => {
   try {
     const allKids = await kids.find();
-    res.json(allKids);
+    res.json(allKids[0].kids);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -72,7 +75,7 @@ app.get("/kids", async (req, res) => {
 app.get("/parents", async (req, res) => {
   try {
     const allParents = await parent.find();
-    res.json(allParents);
+    res.json(allParents[0].parents);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -81,7 +84,7 @@ app.get("/parents", async (req, res) => {
 app.get("/historicaltasks", async (req, res) => {
   try {
     const allHistoricalTasks = await historicaltasks.find();
-    res.json(allHistoricalTasks);
+    res.json(allHistoricalTasks[0].tasks_lists[0].tasks);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -90,7 +93,7 @@ app.get("/historicaltasks", async (req, res) => {
 app.get("/families", async (req, res) => {
   try {
     const allFamilies = await family.find();
-    res.json(allFamilies);
+    res.json(allFamilies[0].families);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -99,7 +102,7 @@ app.get("/families", async (req, res) => {
 app.get("/stocksperuser", async (req, res) => {
   try {
     const allStocks = await stocksperuser.find();
-    res.json(allStocks);
+    res.json(allStocks[0].stocks[0].balance);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -108,7 +111,7 @@ app.get("/stocksperuser", async (req, res) => {
 app.get("/tasks", async (req, res) => {
   try {
     const allTasks = await tasks.find();
-    res.json(allTasks);
+    res.json(allTasks[0].tasks_lists[0].tasks);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -120,9 +123,10 @@ app.get("/tasks", async (req, res) => {
 app.get("/stocks/apple", async (req, res) => {
   try {
     const data = await apple.find();
-    console.log("Apple data fetched:", data.length, "records");
-    console.log(data[0])
-    res.json(data);
+    // console.log("Apple data fetched:", data.length, "records");
+    // console.log(data[0])
+    // console.log(data[0].price)
+    res.json(data[0].price);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -131,7 +135,7 @@ app.get("/stocks/apple", async (req, res) => {
 app.get("/stocks/banana", async (req, res) => {
   try {
     const data = await banana.find();
-    res.json(data);
+    res.json(data[0].price);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -140,7 +144,7 @@ app.get("/stocks/banana", async (req, res) => {
 app.get("/stocks/orange", async (req, res) => {
   try {
     const data = await orange.find();
-    res.json(data);
+    res.json(data[0].price);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -149,7 +153,7 @@ app.get("/stocks/orange", async (req, res) => {
 app.get("/stocks/strawberry", async (req, res) => {
   try {
     const data = await strawberry.find();
-    res.json(data);
+    res.json(data[0].price);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

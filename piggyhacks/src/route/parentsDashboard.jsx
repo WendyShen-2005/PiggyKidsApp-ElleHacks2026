@@ -594,7 +594,15 @@ export default function ParentDashboard() {
                 </li>
               ))}
           </ul>
-        </section> */}
+        </section>
+
+        {/* Monthly Statement Button */}
+        <button 
+          onClick={() => navigate("/parent-monthly-statement")} 
+          className="monthly-statement-btn"
+        >
+          Monthly Statement
+        </button>
       </main>
       <AddTaskPopup
         newTask={newTask}

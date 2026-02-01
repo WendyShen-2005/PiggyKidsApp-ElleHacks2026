@@ -9,6 +9,7 @@ import FarmersMarket from './route/FarmersMarket.jsx';
 import FruitDetail from './route/FruitDetail.jsx';
 import ParentTaskPage from './route/parentTaskPage.jsx';
 import KidMonthlyStatement from './route/KidMonthlyExpenses.jsx';
+import ParentMonthlyStatement from './route/parentMonthlyStatement.jsx';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
       <Route path="/fruit-detail" element={<FruitDetail />} />
       <Route path="/parent-tasks" element={<ParentTaskPage />} />
       <Route path="/kids-monthly-statement" element={<KidMonthlyStatement />} />
+      <Route path="/parent-monthly-statement" element={<ParentMonthlyStatement />} />
     </Routes>
   );
 }

@@ -5,33 +5,100 @@
   padding-bottom: 5rem;
 }
 
-.parent-header {
-  position: relative;          /* needed for absolute positioning */
-  display: flex;
-  justify-content: center;     /* center the title */
-  align-items: center;
-  padding: 1.5rem;
-  background-color: rgba(248, 158, 193, 0.982);
-  /* backdrop-filter: blur(10px); */
-  top: 0;
+/* .parent-header {
   position: sticky;
+  top: 0;
   z-index: 10;
+
+  display: flex;
+  align-items: center;
+
+  padding: 1rem 1.5rem;
+  background-color: rgba(248, 158, 193, 0.982);
+} */
+.parent-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  
+  /* Flexbox remains to align the left and right containers */
+  display: flex;
+  align-items: center;
+  justify-content: space-between; 
+
+  padding: 1rem 1.5rem;
+  background-color: rgba(248, 158, 193, 0.982);
+  
+  /* Crucial: establishes a reference point for the absolute title */
+  position: relative; 
+  min-height: 80px; /* Adjust based on your card height */
+}
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
+.balance-card {
+  position: relative; /* Required for absolute positioning of the button */
+  background: white;
+  padding: 5px 5px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
 
 .profile-btn {
   position: absolute;
-  left: 1.5rem;                /* pinned to left */
-  background: white;
-  padding: 0.5rem;
+  top: 10px;
+  left: 10px;
+  background: none;
+  border: 2px solid #272222;
   border-radius: 50%;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.header-title {
+.balance-info {
+  text-align: center;
+  margin-top: 10px; /* Give space for the button area */
+}
+
+.balance-label {
+  font-size: 12px;
+  color: #888;
+  letter-spacing: 1px;
+}
+
+.balance-amount {
+  font-size: 32px;
+  font-weight: bold;
+  color: #1a2a44;
+}
+/* .header-title {
+  margin-left: auto; 
+  margin-right: auto;
   font-weight: 900;
   font-size: 1.25rem;
   color: #db2777;
+} */
+.header-title {
+  /* Absolute positioning takes it out of the flex flow */
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  
+  margin: 0; /* Remove auto margins */
+  font-weight: 900;
+  font-size: 1.25rem;
+  color: #db2777;
+  white-space: nowrap; /* Prevents title from wrapping */
 }
 
 .logout-btn {
@@ -39,7 +106,7 @@
   padding: 0.5rem 1rem;
   border-radius: 1rem;
   font-weight: 700;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 .see-more-btn {
   background-color: #6366f1;
@@ -59,16 +126,16 @@
 }
 
 /* Balance Card */
-.balance-card {
-  position: relative;
+/* .balance-card {
   background: white;
-  border-radius: 2rem;
-  padding: 2rem;
-  text-align: center;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-}
+  border-radius: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  min-width: 130px;
 
-.balance-label {
+  text-align: left;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12); */
+/* } */
+/* .balance-label {
   font-size: 10px;
   font-weight: bold;
   text-transform: uppercase;
@@ -78,10 +145,19 @@
 }
 
 .balance-amount {
-  font-size: 3rem;
+  font-size: 1.5rem;
   font-weight: 900;
   color: #1e293b;
+} */
+ /* .balance-label {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #94a3b8;
 }
+
+
 .task-notes {
   display: flex;
   flex-wrap: wrap;
@@ -246,7 +322,7 @@
   background: white;
   padding: 1rem;
   border-radius: 2rem;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -324,7 +400,7 @@
   background: white;
   padding: 0.5rem 1rem;
   border-radius: 1rem;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
 .expense-amount {

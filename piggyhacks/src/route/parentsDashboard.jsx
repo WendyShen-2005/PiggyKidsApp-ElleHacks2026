@@ -37,7 +37,6 @@ export default function ParentDashboard() {
 
   const [newTask, setNewTask] = useState(null);
 
-
   const [menuOpen, setMenuOpen] = useState(null);
   const [editTask, setEditTask] = useState(null); // task being edited
 
@@ -131,22 +130,34 @@ export default function ParentDashboard() {
   return (
     <div className="parent-container">
       {/* Header */}
+      {/* Header */}
       <header className="parent-header">
-        <button onClick={() => navigate("/")} className="profile-btn">
-          <User size={20} />
-        </button>
+        {/* LEFT */}
+        <div className="header-left">
+          <div className="balance-card">
+            {/* Move the profile button inside here */}
+            <button onClick={() => navigate("/")} className="profile-btn">
+              <User size={20} />
+            </button>
+
+            <div className="balance-info">
+              <span className="balance-label">TOTAL BALANCE</span>
+              <span className="balance-amount">${balance.toFixed(2)}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* CENTER */}
         <h2 className="header-title">Parent Dashboard</h2>
-        {/* <div className="kids-avatar"></div> */}
-        <TaskPiggy tasks={tasks} />
+
+        {/* RIGHT */}
+        <div className="header-right">
+          <TaskPiggy tasks={tasks} />
+        </div>
       </header>
 
       <main className="parent-main">
         {/* Balance */}
-        <section className="balance-card">
-          <p className="balance-label">Total Balance</p>
-          <h2 className="balance-amount">${balance.toFixed(2)}</h2>
-          <PiggyBank size={120} className="balance-bg-icon" />
-        </section>
 
         {/* Interest Graph */}
         <div className="interest-card">
@@ -193,12 +204,14 @@ export default function ParentDashboard() {
             >
               <Plus size={16} /> Add Task
             </button>
-
           </div>
 
           <div className="task-notes">
             {tasks.slice(0, 4).map((task) => (
-              <div key={task.id} className={`task-note ${task.completed ? "completed" : ""}`}>
+              <div
+                key={task.id}
+                className={`task-note ${task.completed ? "completed" : ""}`}
+              >
                 <div className="thumbtack"></div>
 
                 {/* 3-dot menu */}
@@ -535,7 +548,6 @@ export default function ParentDashboard() {
         setNewTask={setNewTask}
         onTaskAdded={() => fetchTasks()}
       />
-
     </div>
   );
 }

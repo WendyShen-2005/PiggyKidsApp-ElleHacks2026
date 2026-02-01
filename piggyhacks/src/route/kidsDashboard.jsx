@@ -108,7 +108,6 @@ export default function KidsDashboard() {
         <div className="balance-card">
           <p className="balance-label">Current Money</p>
           <h3 className="balance-amount">${balance.toFixed(2)}</h3>
-          <PiggyBank size={120} className="balance-bg-icon" />
         </div>
 
         {/* Interest Graph */}

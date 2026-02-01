@@ -93,7 +93,7 @@ export default function KidsDashboard() {
         <button onClick={() => navigate("/")} className="profile-btn">
           <User size={20} />
         </button>
-        <h2 className="kids-title">My Piggy Dashboard</h2>
+        <h2 className="kids-title">My TeddyBank Dashboard</h2>
         {/* <div className="kids-avatar"></div> */}
         <TaskPiggy tasks={tasks} />
       </header>

@@ -123,7 +123,7 @@ const removeTask = async (task) => {
         {/* Sticky Notes */}
         <div className="task-notes">
           {tasks.map((task) => (
-            <div key={task.id} className={`task-note ${task.status}`}>
+            <div key={task.id} className={`task-note ${task.completed ? "completed" : "pending"}`}>
               <div className="thumbtack"></div>
 
               {/* 3 dots menu */}

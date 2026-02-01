@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"; 
-import { PiggyBank, Upload, FileText } from "lucide-react";
+import { PiggyBank } from "lucide-react";
 import "../style/kidsTaskPage.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -32,23 +32,19 @@ export default function KidsTasksPage() {
     try {
       if (!activeTask) return;
 
-      // 1️⃣ Mark task as completed in backend
       await axios.patch(`http://localhost:5000/tasks/${activeTask.id}/complete`);
 
-      // 2️⃣ Log the earning in Logs DB
       await axios.post("http://localhost:5000/logs", {
         text: `You earned $${activeTask.amount} from "${activeTask.title}"`,
         category: "earning"
       });
 
-      // 3️⃣ Update frontend state
       setTasks((prev) =>
         prev.map((t) =>
           t.id === activeTask.id ? { ...t, completed: true } : t
         )
       );
 
-      // 4️⃣ Reset popup fields
       setActiveTask(null);
       setProofDate("");
       setProofFile(null);
@@ -59,6 +55,24 @@ export default function KidsTasksPage() {
     }
   };
 
+  // Map task titles to emojis
+  // Map task titles to emojis
+const taskEmojiMap = {
+  "Clean dishes": "🍽️",
+  "Change bedding": "🛏️",
+  "Vacuum room": "🧹",
+  "Take out trash": "🗑️",
+  "Water plants": "🌱",
+  "Feed pets": "🐶",
+  "Laundry": "🧺",
+  "Organize toys": "🧸",
+  "Feed the dog": "🐕",
+  "Water the plants": "💧🌿",
+  "Sweep the floor": "🧹",
+  "Put away toys": "🧸",
+};
+
+
   return (
     <div className="tasks-page">
       <div className="tasks-card">
@@ -66,10 +80,10 @@ export default function KidsTasksPage() {
         <div className="tasks-header">
           <div className="flex-center-align">
             <Link to="/kids-dashboard" className="kids-title">
-              My TeddyBank Dashboard
+              My TeddyBank Dashboard 🐷
             </Link>
           </div>
-          <h2>TASKS</h2>
+          <h2>📝 TASKS</h2>
           <div className="pig-icon">
             <PiggyBank size={28} />
           </div>
@@ -77,7 +91,7 @@ export default function KidsTasksPage() {
 
         {/* Total box */}
         <div className="total-box">
-          TOTAL $
+          💰 TOTAL $
           {tasks
             .filter((t) => t.completed)
             .reduce((sum, t) => sum + t.amount, 0)}
@@ -91,11 +105,13 @@ export default function KidsTasksPage() {
               className={`task-note ${task.completed ? "completed" : ""}`}
             >
               <div className="thumbtack" />
-              <h4>{task.title}</h4>
-              {!task.completed && <span>${task.amount}</span>}
+              <h4>
+                {taskEmojiMap[task.title] || "✅"} {task.title}
+              </h4>
+              {!task.completed && <span>💵 ${task.amount}</span>}
               {task.completed && (
                 <span>
-                  Payment confirmation of ${task.amount} pending! Congratulations!
+                  🎉 Payment confirmation of ${task.amount} pending!
                 </span>
               )}
               {!task.completed && (
@@ -103,7 +119,7 @@ export default function KidsTasksPage() {
                   className="complete-btn"
                   onClick={() => handleCompleteClick(task)}
                 >
-                  Complete Task
+                  ✅ Complete Task
                 </button>
               )}
             </div>
@@ -114,9 +130,9 @@ export default function KidsTasksPage() {
         {activeTask && (
           <div className="popup-overlay">
             <div className="popup-card">
-              <h3>Complete "{activeTask.title}"</h3>
+              <h3>📌 Complete "{activeTask.title}"</h3>
               <div className="proof-row">
-                <label>Date:</label>
+                <label>📅 Date:</label>
                 <input
                   type="date"
                   value={proofDate}
@@ -124,7 +140,7 @@ export default function KidsTasksPage() {
                 />
               </div>
               <div className="proof-row">
-                <label>Upload Proof:</label>
+                <label>📎 Upload Proof:</label>
                 <input
                   type="file"
                   onChange={(e) => setProofFile(e.target.files[0])}
@@ -132,13 +148,13 @@ export default function KidsTasksPage() {
               </div>
               <div className="popup-buttons">
                 <button className="upload-btn" onClick={handleProofSubmit}>
-                  Submit
+                  ✅ Submit
                 </button>
                 <button
                   className="cancel-btn"
                   onClick={() => setActiveTask(null)}
                 >
-                  Cancel
+                  ❌ Cancel
                 </button>
               </div>
             </div>

@@ -31,6 +31,27 @@ export default function ParentDashboard() {
   // Inside ParentDashboard component, after your states:
   const [summary, setSummary] = useState([]); // Daily summary logs
 
+  // Map task titles to emojis
+  const taskEmojiMap = {
+    "Clean dishes": "🍽️",
+    "Change bedding": "🛏️",
+    "Vacuum room": "🧹",
+    "Take out trash": "🗑️",
+    "Water plants": "🌱",
+    "Feed pets": "🐶",
+    "Laundry": "🧺",
+    "Organize toys": "🧸",
+    "Feed the dog": "🐕",
+    "Water the plants": "💧🌿",
+    "Sweep the floor": "🧹",
+    "Put away toys": "🧸",
+    "Clean the Room": "🧹",
+    "Wash the Dishes": "🍽️",
+    "Clean room": "🧹",
+    "Clean dishes": "🍽️",
+    "Vacuum kitchen": "🧹",
+  };
+
   const fetchTasks = async () => {
     try {
       const res = await axios.get("http://localhost:5000/tasks");
@@ -349,7 +370,7 @@ export default function ParentDashboard() {
                   </div>
                 )}
 
-                <h4>{task.title}</h4>
+                <h4>{taskEmojiMap[task.title] || "✅"} {task.title}</h4>
                 <span>${task.amount}</span>
               </div>
             ))}

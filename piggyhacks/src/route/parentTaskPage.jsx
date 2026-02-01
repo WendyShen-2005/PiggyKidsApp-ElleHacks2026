@@ -23,6 +23,27 @@ export default function ParentTaskPage() {
   const [editTask, setEditTask] = useState(null); // task being edited
   const [newTask, setNewTask] = useState(null);
 
+  // Map task titles to emojis
+  const taskEmojiMap = {
+    "Clean dishes": "🍽️",
+    "Change bedding": "🛏️",
+    "Vacuum room": "🧹",
+    "Take out trash": "🗑️",
+    "Water plants": "🌱",
+    "Feed pets": "🐶",
+    "Laundry": "🧺",
+    "Organize toys": "🧸",
+    "Feed the dog": "🐕",
+    "Water the plants": "💧🌿",
+    "Sweep the floor": "🧹",
+    "Put away toys": "🧸",
+    "Clean the Room": "🧹",
+    "Wash the Dishes": "🍽️",
+    "Clean room": "🧹",
+    "Clean dishes": "🍽️",
+    "Vacuum kitchen": "🧹",
+  };
+
   // Open Add Task popup
   const addTask = () => {
     setNewTask({ title: "", amount: "" });
@@ -211,7 +232,7 @@ export default function ParentTaskPage() {
                 </div>
               )}
 
-              <h4>{task.title}</h4>
+              <h4>{taskEmojiMap[task.title] || "✅"} {task.title}</h4>
               <span>${task.amount}</span>
             </div>
           ))}

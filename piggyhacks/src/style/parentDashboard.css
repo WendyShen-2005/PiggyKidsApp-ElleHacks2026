@@ -370,12 +370,6 @@
   gap: 1rem;
 }
 
-.expense-btns {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
 .expense-btn {
   display: flex;
   align-items: center;

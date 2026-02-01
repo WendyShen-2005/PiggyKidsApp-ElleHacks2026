@@ -10,10 +10,7 @@ export default function ParentTaskPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [tasks, setTasks] = useState([
-    { id: 1, title: "Clean the Room", amount: 5, status: "pending" },
-    { id: 2, title: "Wash the Dishes", amount: 3, status: "completed" },
-  ]);
+  const [tasks, setTasks] = useState([]);
 
   // Load tasks from navigation state if available
   useEffect(() => {

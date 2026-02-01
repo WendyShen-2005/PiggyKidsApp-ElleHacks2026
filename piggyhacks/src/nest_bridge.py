@@ -62,19 +62,21 @@ def get_child_friendly_message(raw_logs, current_balance):
     '{raw_logs}'
 
     Make sure to highlight the importance of saving money and sound disapointed if they spend more than 50% of their balance.
-    
-    At the end, tell them: 'You will earn 
+
+    At the end, tell them in French: 'You will earn 
     ${daily_interest:.2f} in interest today due to your savings and spendings today!'
     Keep it short and use oinks!
+    Make it all under 4 sentences total.
     """
     
     response = model.generate_content(prompt)
     return response.text
 
+
 # --- 1. SET YOUR PORT ---
 # Look in Arduino IDE -> Tools -> Port. 
 # Windows: 'COM3' | Mac: '/dev/cu.usbmodem...'
-ARDUINO_PORT = 'COM7' 
+ARDUINO_PORT = 'COM3' 
 
 # --- 2. START THE CONNECTION ---
 try:
@@ -88,20 +90,28 @@ except:
 # --- 3. THE LISTENING LOOP ---
 while True:
     if arduino.in_waiting > 0:
-        # Read what the Arduino sent
-        data = arduino.readline().decode('utf-8').strip()
-        
+        data = arduino.readline().decode("utf-8", errors="ignore").strip()
+
         if data == "TILT_DETECTED":
-            # 1. Get raw sentences from MongoDB
-            raw_text = get_all_phrases() 
-            
-            # 2. Get current balance (assume 50 for now, or fetch from DB)
-            balance = 50 
-            
-            # 3. Gemini "Middleman" rewrites it
+
+            raw_text = get_all_phrases()
+            balance = 50.0
+
             final_script = get_child_friendly_message(raw_text, balance)
-            
+
             print(f"✨ Gemini transformed: {final_script}")
-            
-            # 4. Speak the AI-generated version
+
+            # 🔥 STORE FRENCH RESPONSE INTO MONGO
+            document = {
+                "lang": "fr",
+                "event": "daily_summary",
+                "text": final_script,
+                "current_balance": balance,
+            }
+
+            collection.insert_one(document)
+            print("💾 French response saved to MongoDB.")
+
+            # Speak it
             pig_speak(final_script)
+            

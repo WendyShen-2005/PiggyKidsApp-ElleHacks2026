@@ -116,10 +116,11 @@ const FarmersMarket = () => {
             {/* <div className="back-btn">  <Link to="/kids-dashboard">⬅️ Dashboard</Link></div> */} 
         </div>
         {/* Available to invest */}
-        <div className="available-card">
-          <p className="available-label">Available to Invest</p>
+        <div className="available-card piggy-card">
+          <p className="available-label">🐷 Available to Invest</p>
           <h3 className="available-amount">${balance.toFixed(2)}</h3>
         </div>
+
 
         {/* Portfolio balance chart */}
         <div className="tasks-chart" style={{ marginBottom: "20px" }}>
@@ -147,11 +148,14 @@ const FarmersMarket = () => {
             {["week", "month", "year", "all"].map((range) => (
               <button
                 key={range}
-                className={`complete-btn ${timeRange === range ? "active" : ""}`}
+                className={`complete-btn piggy-btn ${timeRange === range ? "active" : ""}`}
                 style={{ flex: 1 }}
                 onClick={() => setTimeRange(range)}
               >
-                {range.charAt(0).toUpperCase() + range.slice(1)}
+                {range === "week" && "📅 Week"}
+                {range === "month" && "🗓️ Month"}
+                {range === "year" && "📆 Year"}
+                {range === "all" && "🌈 All"}
               </button>
             ))}
           </div>
@@ -159,6 +163,7 @@ const FarmersMarket = () => {
 
         {/* Fruits / Stocks list */}
         <div className="fruit-stock-list">
+          <h3 className="market-title">🌽 Farmer’s Market Stocks</h3>
           {fruits.map((fruit) => {
             const change = percentChange(fruit.data);
             return (
@@ -177,10 +182,10 @@ const FarmersMarket = () => {
                     {change >= 0 ? "▲" : "▼"} {Math.abs(change)}%
                   </p>
                   <button
-                    className="invest-btn"
+                    className="invest-btn piggy-invest-btn"
                     onClick={() => handleFruitClick(fruit.name, fruit.data)}
                   >
-                    INVEST
+                    🪙 INVEST
                   </button>
                 </div>
               </div>

@@ -165,6 +165,14 @@ export default function KidsDashboard() {
             ))}
           </div>
         </section>
+
+        {/* Monthly Statement Button */}
+        <button 
+          onClick={() => navigate("/kids-monthly-statement")} 
+          className="monthly-statement-btn"
+        >
+          Monthly Statement
+        </button>
       </main>
     </div>
   );

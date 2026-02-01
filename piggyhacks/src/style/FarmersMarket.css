@@ -145,3 +145,188 @@
   align-items: center;
   justify-content: center;
 }
+
+/* 🌸 GLOBAL PAGE THEME */
+.tasks-page {
+  background: #fff6fb;
+  font-family: "Comic Sans MS", "Poppins", cursive;
+}
+
+.tasks-card {
+  background: white;
+  border-radius: 22px;
+  padding: 25px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+}
+
+/* 🐷 TITLES */
+.market-title {
+  text-align: center;
+  font-size: 22px;
+  color: #ff69b4;
+  margin: 15px 0;
+}
+
+/* 🐽 AVAILABLE CARD */
+.piggy-card {
+  background: linear-gradient(135deg, #ffe4ec, #fff0f5);
+  border-radius: 18px;
+  padding: 18px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.available-label {
+  font-size: 16px;
+  color: #ff69b4;
+}
+
+.available-amount {
+  font-size: 28px;
+  font-weight: bold;
+  color: #4caf50;
+}
+
+/* 📈 CHART CONTAINER */
+.tasks-chart {
+  background: #fafafa;
+  border-radius: 16px;
+  padding: 15px;
+}
+
+/* 🐷 BUTTONS */
+.piggy-btn {
+  background: #ffb6c1;
+  border-radius: 12px;
+  border: none;
+  font-weight: bold;
+}
+
+.piggy-btn.active {
+  background: #ff69b4;
+  color: white;
+}
+
+/* 🍎 FRUIT STOCK LIST */
+.fruit-stock-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fruit-stock-card {
+  background: #fff0f5;
+  border-radius: 16px;
+  padding: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fruit-name {
+  font-size: 16px;
+  font-weight: bold;
+  color: #ff69b4;
+}
+
+.ticker {
+  font-size: 12px;
+  color: #888;
+}
+
+.fruit-price {
+  font-size: 18px;
+  font-weight: bold;
+  color: #4caf50;
+}
+
+/* 📊 PERCENT CHANGE */
+.percent-change.up {
+  color: #22c55e;
+}
+
+.percent-change.down {
+  color: #ef4444;
+}
+
+/* 🪙 INVEST BUTTON */
+.piggy-invest-btn {
+  background: #ffd966;
+  border: none;
+  border-radius: 14px;
+  padding: 8px 14px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.piggy-invest-btn:hover {
+  background: #ffcc33;
+  transform: scale(1.05);
+}
+
+/* 🐷 HEADER */
+.piggy-header {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.fruit-hero {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.fruit-emoji {
+  font-size: 36px;
+}
+
+.fruit-title {
+  font-size: 26px;
+  color: #ff69b4;
+}
+
+/* 📈 CHART CARD */
+.chart-card {
+  margin-bottom: 15px;
+}
+
+/* 🪙 PRICE CARD */
+.price-card {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.price-card h3 {
+  font-size: 28px;
+  color: #4caf50;
+  margin-top: 5px;
+}
+
+/* 🌱 INFO CARD */
+.info-card {
+  margin-top: 15px;
+  text-align: left;
+}
+
+.info-card h4 {
+  text-align: center;
+  color: #ff69b4;
+  margin-bottom: 10px;
+}
+
+.info-card p {
+  font-size: 15px;
+  margin: 6px 0;
+}
+
+/* 📊 PROFIT COLORS */
+.profit-up {
+  color: #22c55e;
+  font-weight: bold;
+}
+
+.profit-down {
+  color: #ef4444;
+  font-weight: bold;
+}

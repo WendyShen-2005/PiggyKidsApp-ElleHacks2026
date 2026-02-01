@@ -113,5 +113,9 @@ while True:
             print("💾 French response saved to MongoDB.")
 
             # Speak it
-            pig_speak(final_script)
+            # pig_speak(final_script)
+
+            pig_speak("Oink oink! Your teddy bank has a balance of fifty dollars. You earned five dollars by completing a task and will also earn two dollars and fifty cents in interest today for your smart saving! Oink! En français :Oink oink ! Votre tirelire a un solde de cinquante dollars. Vous avez gagné cinq dollars en accomplissant une tâche et gagnerez aussi deux dollars et cinquante cents d'intérêt aujourd'hui grâce à vos économies intelligentes ! Oink !")
+
+
             

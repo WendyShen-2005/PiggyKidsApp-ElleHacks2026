@@ -23,7 +23,6 @@ export default function ParentDashboard() {
   const [balance, setBalance] = useState(50);
   const [editExpense, setEditExpense] = useState(null);
 
-
   const [newTask, setNewTask] = useState(null);
 
   const [menuOpen, setMenuOpen] = useState(null);
@@ -43,47 +42,45 @@ export default function ParentDashboard() {
   };
 
   const createExpense = async (expense) => {
-  try {
-    const res = await axios.post("http://localhost:5000/expenses", {
-      category: expense.name,
-      price: expense.amount,
-      date: new Date().toISOString(),
-    });
+    try {
+      const res = await axios.post("http://localhost:5000/expenses", {
+        category: expense.name,
+        price: expense.amount,
+        date: new Date().toISOString(),
+      });
 
-    // Re-fetch expenses so UI matches DB
-    await fetchExpenses();
+      // Re-fetch expenses so UI matches DB
+      await fetchExpenses();
 
-    // Update balance
-    setBalance((prev) => prev - expense.amount);
+      // Update balance
+      setBalance((prev) => prev - expense.amount);
 
-    console.log("Expense created:", res.data);
-  } catch (err) {
-    console.error("Failed to create expense:", err);
-  }
-};
-
+      console.log("Expense created:", res.data);
+    } catch (err) {
+      console.error("Failed to create expense:", err);
+    }
+  };
 
   const fetchExpenses = async () => {
-  try {
-    const res = await axios.get("http://localhost:5000/expenses");
+    try {
+      const res = await axios.get("http://localhost:5000/expenses");
 
-    if (Array.isArray(res.data)) {
-      const mapped = res.data.map((e) => ({
-        id: e._id,          // Mongo _id → id
-        category: e.category,
-        amount: e.price,   // price → amount
-        date: e.date,
-      }));
+      if (Array.isArray(res.data)) {
+        const mapped = res.data.map((e) => ({
+          id: e._id, // Mongo _id → id
+          category: e.category,
+          amount: e.price, // price → amount
+          date: e.date,
+        }));
 
-      setExpenses(mapped);
-    } else {
-      setExpenses([]);
+        setExpenses(mapped);
+      } else {
+        setExpenses([]);
+      }
+    } catch (err) {
+      console.error("Failed to fetch expenses:", err);
     }
-  } catch (err) {
-    console.error("Failed to fetch expenses:", err);
-  }
-};
-
+  };
 
   useEffect(() => {
     fetchTasks();
@@ -157,8 +154,8 @@ export default function ParentDashboard() {
   };
 
   // -----------------------------
-// Remove task locally and in DB only (no history)
-// -----------------------------
+  // Remove task locally and in DB only (no history)
+  // -----------------------------
   const removeTaskNoHistory = async (taskId) => {
     try {
       // 1️⃣ Delete from current tasks in DB
@@ -174,34 +171,33 @@ export default function ParentDashboard() {
     }
   };
 
-
   const removeTask = async (task) => {
-  try {
-    // 1️⃣ Remove from current tasks
-    await axios.delete(`http://localhost:5000/tasks/${task.id}/delete`);
+    try {
+      // 1️⃣ Remove from current tasks
+      await axios.delete(`http://localhost:5000/tasks/${task.id}/delete`);
 
-    // 2️⃣ Add to historical tasks
-    // Replace "697e484fca16bfae68aef31c" with your actual historicaltasks docId
-    const historicalDocId = "697e484fca16bfae68aef31c";
+      // 2️⃣ Add to historical tasks
+      // Replace "697e484fca16bfae68aef31c" with your actual historicaltasks docId
+      const historicalDocId = "697e484fca16bfae68aef31c";
 
-    await axios.post(
-      `http://localhost:5000/historicaltasks/${historicalDocId}/add`,
-      {
-        price: task.amount,
-        desc: task.title,
-        childid: task.childid || 1, // provide childid if available
-      },
-    );
+      await axios.post(
+        `http://localhost:5000/historicaltasks/${historicalDocId}/add`,
+        {
+          price: task.amount,
+          desc: task.title,
+          childid: task.childid || 1, // provide childid if available
+        },
+      );
 
-    // 3️⃣ Update frontend state
-    setTasks((prev) => prev.filter((t) => t.id !== task.id));
-    setMenuOpen(null);
+      // 3️⃣ Update frontend state
+      setTasks((prev) => prev.filter((t) => t.id !== task.id));
+      setMenuOpen(null);
 
-    console.log(`Task "${task.title}" moved to history successfully.`);
-  } catch (err) {
-    console.error("Failed to remove task:", err);
-  }
-};
+      console.log(`Task "${task.title}" moved to history successfully.`);
+    } catch (err) {
+      console.error("Failed to remove task:", err);
+    }
+  };
 
   return (
     <div className="parent-container">
@@ -327,10 +323,12 @@ export default function ParentDashboard() {
                         >
                           Modify
                         </div>
-                        <div className="menu-item" onClick={() => removeTaskNoHistory(task.id)}>
+                        <div
+                          className="menu-item"
+                          onClick={() => removeTaskNoHistory(task.id)}
+                        >
                           Remove
                         </div>
-
                       </>
                     )}
                     {task.completed === true && (
@@ -341,7 +339,10 @@ export default function ParentDashboard() {
                         >
                           Confirm
                         </div> */}
-                        <div className="menu-item" onClick={() => removeTask(task)}>
+                        <div
+                          className="menu-item"
+                          onClick={() => removeTask(task)}
+                        >
                           Confirm Payment & Remove Task
                         </div>
                         <div

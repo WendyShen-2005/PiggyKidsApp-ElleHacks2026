@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   PiggyBank,
@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import "../style/kidsDashboard.css";
 import TaskPiggy from "../components/taskPiggy.jsx";
+import axios from "axios";
 
 export default function KidsDashboard() {
   const navigate = useNavigate();
@@ -28,12 +29,34 @@ export default function KidsDashboard() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
 
+  const [expenses, setExpenses] = useState([]);
+
   const [tasks, setTasks] = useState([
     { id: 1, title: "Clean the Room", status: "completed" },
     { id: 2, title: "Wash the Dishes", status: "pending" },
     { id: 3, title: "Feed the Dog", status: "pending" },
   ]);
 
+  const fetchExpenses = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/expenses");
+
+      if (Array.isArray(res.data)) {
+        const mapped = res.data.map((e) => ({
+          id: e._id, // Mongo _id → id
+          category: e.category,
+          amount: e.price, // price → amount
+          date: e.date,
+        }));
+
+        setExpenses(mapped);
+      } else {
+        setExpenses([]);
+      }
+    } catch (err) {
+      console.error("Failed to fetch expenses:", err);
+    }
+  };
   const handleChat = (e) => {
     e.preventDefault();
     if (!chatInput.trim()) return;
@@ -52,6 +75,9 @@ export default function KidsDashboard() {
       ]);
     }, 1000);
   };
+  useEffect(() => {
+    fetchExpenses();
+  }, []);
 
   const playTTS = (text) => {
     if ("speechSynthesis" in window) {
@@ -71,7 +97,6 @@ export default function KidsDashboard() {
         {/* <div className="kids-avatar"></div> */}
         <TaskPiggy tasks={tasks} />
       </header>
-
       <main className="kids-main">
         {/* Balance Display */}
         <div className="balance-card">
@@ -119,73 +144,28 @@ export default function KidsDashboard() {
             <span>Stock Farm</span>
           </button>
         </div>
-      </main>
-
-      {/* Floating AI Pig
-      <button
-        onClick={() => setShowPigChat(true)}
-        className={`floating-pig ${isSpeaking ? "speaking" : "bouncing"}`}
-      >
-        <div className="floating-label">
-          <Sparkles size={12} /> ASK ME!
-        </div>
-        <PiggyBank size={40} className="floating-icon" />
-      </button> */}
-
-      {/* AI Pig Chat Modal
-      {showPigChat && (
-        <div className="pig-chat-overlay">
-          <div className="pig-chat-modal">
-            <div className="pig-chat-header">
-              <div className="pig-chat-title">
-                <PiggyBank size={24} className="text-pink-500" />
-                <span>Smart Piggy</span>
-              </div>
-              <button
-                onClick={() => setShowPigChat(false)}
-                className="close-btn"
-              >
-                <X size={20} />
-              </button>
-            </div>
-            <div className="pig-chat-messages">
-              {messages.map((m, i) => (
-                <div
-                  key={i}
-                  className={`message-wrapper ${m.role === "user" ? "user" : "pig"}`}
-                >
-                  <div
-                    className={`message-box ${m.role === "user" ? "user-msg" : "pig-msg"}`}
-                  >
-                    {m.text}
-                    {m.role === "pig" && (
-                      <button
-                        onClick={() => playTTS(m.text)}
-                        className="tts-btn"
-                        disabled={isSpeaking}
-                      >
-                        <Volume2 size={14} />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
-              {isGenerating && <div className="loader">Loading...</div>}
-            </div>
-            <form onSubmit={handleChat} className="pig-chat-input">
-              <input
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                placeholder="Talk to your pig..."
-              />
-              <button type="submit">
-                <Send size={20} />
-              </button>
-            </form>
+        <section className="expenses-section">
+          <div
+            className="tasks-header"
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <h3>Expenses</h3>
           </div>
-        </div>
-      )}
-    </div> */}
+
+          <div className="expenses-list">
+            {expenses.map((exp) => (
+              <div key={exp.id} className="expense-item">
+                <span>{exp.category}</span>
+                <span className="expense-amount">${exp.amount.toFixed(2)}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      </main>
     </div>
   );
 }

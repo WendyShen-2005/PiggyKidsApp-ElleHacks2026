@@ -56,17 +56,17 @@ def get_child_friendly_message(raw_logs, current_balance):
     
     # The Prompt: This is where you tell Gemini how to behave
     prompt = f"""
-    You are a friendly, magical piggy bank. 
-    At the start, tell the child: The piggy bank has a balance of ${current_balance:.2f}
+    You are a friendly, magical teddy bank. 
+    At the start, tell the child: The teddy bank has a balance of {current_balance:.2f} dollars.
     Then tell them the following:
     '{raw_logs}'
 
-    Make sure to highlight the importance of saving money and sound disapointed if they spend more than 50% of their balance.
+    Make sure to highlight the importance of saving money and sound disapointed if they spend more than 50 percent of their balance.
 
-    At the end, tell them in French: 'You will earn 
-    ${daily_interest:.2f} in interest today due to your savings and spendings today!'
+    'You will earn 
+    {daily_interest:.2f} dollars in interest today due to your savings and spendings today!'
     Keep it short and use oinks!
-    Make it all under 4 sentences total.
+    Make it all under 4 sentences total, keep it in english and then translate it to good accent French.
     """
     
     response = model.generate_content(prompt)

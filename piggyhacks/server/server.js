@@ -22,6 +22,10 @@ const stocksConn = mongoose.createConnection(process.env.MONGO_STOCKS);
 stocksConn.on("connected", () => console.log("✅ Stocks DB connected"));
 stocksConn.on("error", err => console.error("❌ Stocks DB connection error:", err));
 
+const logsConn = mongoose.createConnection(process.env.MONGO_LOGS);
+logsConn.on("connected", () => console.log("✅ Logs DB connected"));
+logsConn.on("error", err => console.error("❌ Logs DB connection error:", err));
+
 Promise.all([
   new Promise((resolve, reject) => {
     usersConn.once("open", resolve);
@@ -30,10 +34,14 @@ Promise.all([
   new Promise((resolve, reject) => {
     stocksConn.once("open", resolve);
     stocksConn.once("error", reject);
+  }),
+  new Promise((resolve, reject) => {
+    logsConn.once("open", resolve);
+    logsConn.once("error", reject);
   })
 ])
 .then(() => {
-  console.log("Both DBs connected — starting server");
+  console.log("All DBs connected — starting server");
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 })
@@ -60,6 +68,43 @@ const strawberry = stocksConn.model("Strawberry", new mongoose.Schema({}, { stri
 // -----------------------------
 // Basic routes
 // -----------------------------
+
+const Log = logsConn.model("Log", new mongoose.Schema({}, { strict: false }),  "userLog");
+
+// -----------------------------
+// Logs API
+// -----------------------------
+
+// GET all logs
+app.get("/logs", async (req, res) => {
+  try {
+    const allLogs = await Log.find().sort({ createdAt: -1 });
+    res.json(allLogs);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST a new log
+app.post("/logs", async (req, res) => {
+  try {
+    const { text, category } = req.body;
+
+    if (!text || !category) {
+      return res.status(400).json({ error: "text and category are required" });
+    }
+
+    const newLog = new Log({ text, category });
+    await newLog.save();
+
+    res.json({ message: "Log created successfully", log: newLog });
+  } catch (err) {
+    console.error("Failed to create log:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 // -----------------------------
 // Users-related routes
 // -----------------------------
@@ -164,23 +209,73 @@ app.post("/tasks/:docId/add", async (req, res) => {
     const { docId } = req.params;
     const newTask = req.body;
 
+    console.log("Adding task to docId:", docId);
+    console.log("New task data:", newTask);
+
+    // Fetch the document to find the next ID
+    const doc = await tasks.findById(new mongoose.Types.ObjectId(docId));
+    console.log("Found document:", doc);
+
+    let nextId = 0;
+    
+    if (doc && doc.tasks_lists && doc.tasks_lists.length > 0) {
+      // Find the max ID and increment by 1
+      const ids = doc.tasks_lists.map(t => t.id || 0);
+      console.log("Existing IDs:", ids);
+      const maxId = Math.max(...ids);
+      console.log("Max ID:", maxId);
+      nextId = maxId + 1;
+    }
+
+    console.log("Next ID to assign:", nextId);
+
+    // Add the ID to the new task
+    const taskWithId = { ...newTask, id: nextId };
+    console.log("Task with ID:", taskWithId);
+
     const result = await tasks.updateOne(
       { _id: new mongoose.Types.ObjectId(docId) },
       {
         $push: {
-          tasks_lists: newTask
+          tasks_lists: taskWithId
         }
       }
     );
 
+    console.log("Update result:", result);
+
     res.json({
       message: "Task added successfully",
-      result
+      result,
+      task: taskWithId
     });
   } catch (err) {
+    console.error("Error adding task:", err);
     res.status(500).json({ error: err.message });
   }
 });
+
+// PATCH /tasks/:taskId/complete
+app.patch("/tasks/:taskId/complete", async (req, res) => {
+  const taskId = Number(req.params.taskId); // Convert to number
+  try {
+    // Find the document that contains the task
+    const result = await tasks.updateOne(
+      { "tasks_lists.id": taskId }, // find the task by id in the array
+      { $set: { "tasks_lists.$.completed": true } } // $ updates the matching array element
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    res.json({ message: `Task ${taskId} marked as completed.` });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 
 
 // -----------------------------

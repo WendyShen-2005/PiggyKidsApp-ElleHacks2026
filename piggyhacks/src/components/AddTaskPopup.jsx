@@ -7,18 +7,18 @@ export default function AddTaskPopup({ newTask, setNewTask, onTaskAdded }) {
 
   const handleSubmit = async () => {
     try {
-      await axios.post(
+      const res = await axios.post(
         "http://localhost:5000/tasks/697e4715ca16bfae68aef315/add",
         {
           title: newTask.title,
           amount: Number(newTask.amount),
           completed: false,
-          childid: null
+          childid: null,
         }
       );
 
-      // let parent refresh tasks
-      if (onTaskAdded) onTaskAdded();
+      // let parent know about the added task (server returns the created task)
+      if (onTaskAdded) onTaskAdded(res.data);
 
       setNewTask(null);
     } catch (err) {

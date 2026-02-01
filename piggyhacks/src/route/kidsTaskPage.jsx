@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"; 
 import { PiggyBank, Upload, FileText } from "lucide-react";
 import "../style/kidsTaskPage.css";
 import { Link } from "react-router-dom";
@@ -6,35 +6,57 @@ import axios from "axios";
 
 export default function KidsTasksPage() {
   const [tasks, setTasks] = useState([]);
-
-  useEffect(() => {
-  axios.get("http://localhost:5000/tasks")
-    .then(res => {
-      if (Array.isArray(res.data)) {
-        setTasks(res.data);
-      } else {
-        setTasks([]);
-      }
-    })
-    .catch(err => console.error(err));
-}, []);
-
-
   const [activeTask, setActiveTask] = useState(null);
   const [proofDate, setProofDate] = useState("");
   const [proofFile, setProofFile] = useState(null);
+
+  // Fetch tasks from backend
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/tasks")
+      .then((res) => {
+        if (Array.isArray(res.data)) {
+          setTasks(res.data);
+        } else {
+          setTasks([]);
+        }
+      })
+      .catch((err) => console.error(err));
+  }, []);
 
   const handleCompleteClick = (task) => {
     setActiveTask(task);
   };
 
-  const handleProofSubmit = () => {
-    setTasks((prev) =>
-      prev.map((t) => (t.id === activeTask.id ? { ...t, completed: true } : t)),
-    );
-    setActiveTask(null);
-    setProofDate("");
-    setProofFile(null);
+  const handleProofSubmit = async () => {
+    try {
+      if (!activeTask) return;
+
+      // 1️⃣ Mark task as completed in backend
+      await axios.patch(`http://localhost:5000/tasks/${activeTask.id}/complete`);
+
+      // 2️⃣ Log the earning in Logs DB
+      await axios.post("http://localhost:5000/logs", {
+        text: `You earned $${activeTask.amount} from "${activeTask.title}"`,
+        category: "earning"
+      });
+
+      // 3️⃣ Update frontend state
+      setTasks((prev) =>
+        prev.map((t) =>
+          t.id === activeTask.id ? { ...t, completed: true } : t
+        )
+      );
+
+      // 4️⃣ Reset popup fields
+      setActiveTask(null);
+      setProofDate("");
+      setProofFile(null);
+
+    } catch (err) {
+      console.error("Failed to complete task or log it:", err);
+      alert("Failed to complete task. Make sure the task ID exists in the DB.");
+    }
   };
 
   return (
@@ -45,7 +67,7 @@ export default function KidsTasksPage() {
           <div className="flex-center-align">
             <Link to="/kids-dashboard" className="kids-title">
               My Piggy Dashboard
-            </Link>{" "}
+            </Link>
           </div>
           <h2>TASKS</h2>
           <div className="pig-icon">
@@ -73,8 +95,7 @@ export default function KidsTasksPage() {
               {!task.completed && <span>${task.amount}</span>}
               {task.completed && (
                 <span>
-                  Payment confirmation of ${task.amount} pending!
-                  Congratulations!
+                  Payment confirmation of ${task.amount} pending! Congratulations!
                 </span>
               )}
               {!task.completed && (

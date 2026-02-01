@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { MoreVertical, Plus, X } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "../style/kidsTaskPage.css";
+import AddTaskPopup from "../components/AddTaskPopup.jsx";
 
 export default function ParentTaskPage() {
   const navigate = useNavigate();
@@ -21,13 +22,11 @@ export default function ParentTaskPage() {
 
   const [menuOpen, setMenuOpen] = useState(null);
   const [editTask, setEditTask] = useState(null); // task being edited
+  const [newTask, setNewTask] = useState(null);
 
-  // Add new task
+  // Open Add Task popup
   const addTask = () => {
-    setTasks((prev) => [
-      ...prev,
-      { id: Date.now(), title: "New Task", amount: 5, status: "pending" },
-    ]);
+    setNewTask({ title: "", amount: "" });
   };
 
   // Remove task
@@ -179,6 +178,19 @@ export default function ParentTaskPage() {
             </div>
           </div>
         )}
+        
+        {newTask && (
+          <AddTaskPopup
+            newTask={newTask}
+            setNewTask={setNewTask}
+            onTaskAdded={(res) => {
+              if (res && res.task) {
+                setTasks((prev) => [...prev, res.task]);
+              }
+            }}
+          />
+        )}
+
       </div>
     </div>
   );

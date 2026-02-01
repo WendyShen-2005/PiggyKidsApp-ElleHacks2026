@@ -44,17 +44,19 @@ export default function ParentDashboard() {
   // Inside ParentDashboard component, after your states:
   const [summary, setSummary] = useState([]); // Daily summary logs
 
+  const fetchTasks = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/tasks");
+      if (Array.isArray(res.data)) setTasks(res.data);
+      else setTasks([]);
+    } catch (err) {
+      console.error("Failed to fetch tasks:", err);
+    }
+  };
+
   useEffect(() => {
-  axios.get("http://localhost:5000/tasks")
-    .then(res => {
-      if (Array.isArray(res.data)) {
-        setTasks(res.data);
-      } else {
-        setTasks([]);
-      }
-    })
-    .catch(err => console.error(err));
-}, []);
+    fetchTasks();
+  }, []);
 
   // Helper: format today's date
   const isToday = (dateStr) => {
@@ -531,21 +533,7 @@ export default function ParentDashboard() {
       <AddTaskPopup
         newTask={newTask}
         setNewTask={setNewTask}
-        onSubmit={() => {
-          if (!newTask.title || !newTask.amount) return;
-
-          setTasks((prev) => [
-            ...prev,
-            {
-              id: Date.now(),
-              title: newTask.title,
-              amount: Number(newTask.amount),
-              completed: false,
-            },
-          ]);
-
-          setNewTask(null);
-        }}
+        onTaskAdded={() => fetchTasks()}
       />
 
     </div>

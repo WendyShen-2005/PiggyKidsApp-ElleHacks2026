@@ -18,7 +18,9 @@
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 
 .monthly-statement-btn:hover {
@@ -45,17 +47,17 @@
   position: sticky;
   top: 0;
   z-index: 10;
-  
+
   /* Flexbox remains to align the left and right containers */
   display: flex;
   align-items: center;
-  justify-content: space-between; 
+  justify-content: space-between;
 
   padding: 1rem 1.5rem;
   background-color: rgba(248, 158, 193, 0.982);
-  
+
   /* Crucial: establishes a reference point for the absolute title */
-  position: relative; 
+  position: relative;
   min-height: 80px; /* Adjust based on your card height */
 }
 .header-left {
@@ -118,7 +120,7 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  
+
   margin: 0; /* Remove auto margins */
   font-weight: 900;
   font-size: 1.25rem;
@@ -150,145 +152,37 @@
   gap: 1.5rem;
 }
 
-/* Balance Card */
-/* .balance-card {
-  background: white;
-  border-radius: 0.75rem;
-  padding: 0.5rem 0.75rem;
-  min-width: 130px;
-
-  text-align: left;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12); */
-/* } */
-/* .balance-label {
-  font-size: 10px;
-  font-weight: bold;
-  text-transform: uppercase;
-  color: #94a3b8;
-  margin-bottom: 0.5rem;
-  letter-spacing: 0.2em;
-}
-
-.balance-amount {
-  font-size: 1.5rem;
-  font-weight: 900;
-  color: #1e293b;
-} */
- /* .balance-label {
-  font-size: 0.6rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: #94a3b8;
-}
-
-
-.task-notes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-}
-
-.task-note {
-  position: relative;
-  width: 140px;
-  min-height: 120px;
-  background: #fef9c3;
-  border-radius: 12px;
-  padding: 14px 10px 10px;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-start;
-  transform: rotate(-1deg);
-}
-
-.task-note.completed {
-  background: #dcfce7;
-  border-color: #86efac;
-}
-
-.thumbtack {
-  position: absolute;
-  top: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 14px;
-  height: 14px;
-  background: #ef4444;
-  border-radius: 50%;
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.3);
-}
-
-.balance-bg-icon {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  opacity: 0.05;
-}
-
-.interest-card {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 2rem;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-}
-
-.interest-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.interest-title {
-  font-weight: 900;
-  font-size: 0.875rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #334155;
-}
-
-.growth-percent {
-  font-weight: 900;
-  font-size: 0.75rem;
-  color: #16a34a;
-}
-
 .graph {
   display: flex;
-  align-items: flex-end;
-  gap: 0.5rem;
-  height: 10rem;
+  align-items: flex-end; /* makes bars grow from bottom */
+  gap: 0.5rem; /* space between bars */
+  height: 120px; /* fixed height so % heights work */
+  padding: 0.5rem 0;
+  background: #f5f5f5;
+  border-radius: 0.75rem;
 }
 
 .bar-wrapper {
-  flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
   align-items: center;
   position: relative;
+  background-color: #f489b9;
 }
 
 .bar {
-  width: 100%;
-  background-color: #fbcfe8;
-  border-radius: 1rem 1rem 0 0;
-  position: relative;
+  width: 20px; /* narrow bars so they are visible individually */
+  border-radius: 0.5rem 0.5rem 0 0;
   cursor: pointer;
 }
 
 .bar:hover {
-  background-color: #f472b6;
+  background-color: #f489b9;
 }
 
 .tooltip {
   position: absolute;
-  top: -3rem;
+  top: -2.5rem;
   background: #1e293b;
   color: white;
   font-size: 0.625rem;
@@ -296,6 +190,8 @@
   border-radius: 0.5rem;
   opacity: 0;
   pointer-events: none;
+  white-space: nowrap;
+  text-align: center;
 }
 
 .bar:hover .tooltip {
@@ -303,25 +199,21 @@
 }
 
 .bar-label {
-  font-size: 0.5rem;
+  font-size: 0.625rem;
   font-weight: 700;
-  color: #db2777;
-  margin-bottom: 0.25rem;
-  opacity: 0;
-}
-
-.bar:hover .bar-label {
-  opacity: 1;
+  color: #f489b9;
+  margin-top: 0.25rem;
 }
 
 .graph-labels {
   display: flex;
   justify-content: space-between;
-  font-size: 0.5rem;
+  font-size: 0.625rem;
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: #94a3b8;
+  margin-top: 0.5rem;
 }
 
 /* Tasks Section */

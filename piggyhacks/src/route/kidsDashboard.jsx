@@ -36,7 +36,13 @@ export default function KidsDashboard() {
     { id: 2, title: "Wash the Dishes", status: "pending" },
     { id: 3, title: "Feed the Dog", status: "pending" },
   ]);
+  const data = [45, 65, 55, 85, 110, 130];
 
+  // Scale heights to 100% max
+  const maxValue = Math.max(...data);
+  const scaledData = data.map((h) => (h / maxValue) * 100);
+
+  const interestRate = "+3.5%";
   const fetchExpenses = async () => {
     try {
       const res = await axios.get("http://localhost:5000/expenses");
@@ -111,21 +117,23 @@ export default function KidsDashboard() {
             <h3 className="interest-title">
               <TrendingUp size={16} /> My Interest Growth
             </h3>
-            <span className="growth-percent">+4.2%</span>
+            <span className="growth-percent">{interestRate}</span>
           </div>
+
           <div className="graph">
-            {[45, 65, 55, 85, 110, 130].map((h, i) => (
-              <div key={i} className="bar-wrapper">
+            {scaledData.map((h, i) => (
+              <div key={i} className="bar-wrapper" style={{ height: h + "px" }}>
                 <div className="bar" style={{ height: `${h}%` }}>
                   <div className="tooltip">
-                    <p className="week">Week {i + 1}</p>
-                    <p className="amount">+${(h * 0.1).toFixed(2)}</p>
+                    <p>Week {i + 1}</p>
+                    <p>+${(data[i] * 0.1).toFixed(2)}</p>
                   </div>
-                  <div className="bar-label">${(h * 0.1).toFixed(0)}</div>
                 </div>
+                <div className="bar-label">${Math.round(data[i] * 0.1)}</div>
               </div>
             ))}
           </div>
+
           <div className="graph-labels">
             <span>Month 1</span>
             <span>Month 2</span>
@@ -167,8 +175,8 @@ export default function KidsDashboard() {
         </section>
 
         {/* Monthly Statement Button */}
-        <button 
-          onClick={() => navigate("/kids-monthly-statement")} 
+        <button
+          onClick={() => navigate("/kids-monthly-statement")}
           className="monthly-statement-btn"
         >
           Monthly Statement

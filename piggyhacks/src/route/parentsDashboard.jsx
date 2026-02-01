@@ -41,6 +41,14 @@ export default function ParentDashboard() {
     }
   };
 
+  const data = [45, 65, 55, 85, 110, 130];
+
+  // Scale heights to 100% max
+  const maxValue = Math.max(...data);
+  const scaledData = data.map((h) => (h / maxValue) * 100);
+
+  const interestRate = "+3.5%";
+
   const createExpense = async (expense) => {
     try {
       const res = await axios.post("http://localhost:5000/expenses", {
@@ -130,11 +138,11 @@ export default function ParentDashboard() {
   const removeTaskNoHistory = async (taskId) => {
     try {
       // 1️⃣ Delete from current tasks in DB
-const docId = "697e4715ca16bfae68aef315"; // usually your tasks DB doc _id
+      const docId = "697e4715ca16bfae68aef315"; // usually your tasks DB doc _id
 
-await axios.delete(
-  `http://localhost:5000/tasks/${docId}/${taskId}/delete`
-);
+      await axios.delete(
+        `http://localhost:5000/tasks/${docId}/${taskId}/delete`,
+      );
 
       // 2️⃣ Update frontend state
       setTasks((prev) => prev.filter((t) => t.id !== taskId));
@@ -149,11 +157,11 @@ await axios.delete(
   const removeTask = async (task) => {
     try {
       // 1️⃣ Remove from current tasks
-const docId = "697e4715ca16bfae68aef315"; // usually your tasks DB doc _id
+      const docId = "697e4715ca16bfae68aef315"; // usually your tasks DB doc _id
 
-await axios.delete(
-  `http://localhost:5000/tasks/${docId}/${task.id}/delete`
-);
+      await axios.delete(
+        `http://localhost:5000/tasks/${docId}/${task.id}/delete`,
+      );
 
       // 2️⃣ Add to historical tasks
       // Replace "697e484fca16bfae68aef31c" with your actual historicaltasks docId
@@ -216,21 +224,27 @@ await axios.delete(
             <h3 className="interest-title">
               <TrendingUp size={16} /> My Interest Growth
             </h3>
-            <span className="growth-percent">+4.2%</span>
+            <span className="growth-percent">{interestRate}</span>
           </div>
+
           <div className="graph">
-            {[45, 65, 55, 85, 110, 130].map((h, i) => (
-              <div key={i} className="bar-wrapper">
+            {scaledData.map((h, i) => (
+              <div
+                key={i}
+                className="bar-wrapper"
+                style={{ height: h + "px" }}
+              >
                 <div className="bar" style={{ height: `${h}%` }}>
                   <div className="tooltip">
-                    <p className="week">Week {i + 1}</p>
-                    <p className="amount">+${(h * 0.1).toFixed(2)}</p>
+                    <p>Week {i + 1}</p>
+                    <p>+${(data[i] * 0.1).toFixed(2)}</p>
                   </div>
-                  <div className="bar-label">${(h * 0.1).toFixed(0)}</div>
                 </div>
+                <div className="bar-label">${Math.round(data[i] * 0.1)}</div>
               </div>
             ))}
           </div>
+
           <div className="graph-labels">
             <span>Month 1</span>
             <span>Month 2</span>
@@ -433,7 +447,6 @@ await axios.delete(
             </button>
           </div>
 
-          {/* Expense sticky notes */}
           <div className="expenses-list">
             {expenses.map((exp) => (
               <div key={exp.id} className="expense-item">
@@ -441,7 +454,7 @@ await axios.delete(
                 <span className="expense-amount">${exp.amount.toFixed(2)}</span>
 
                 {/* 3-dot menu for Modify / Remove */}
-                <div
+                {/* <div
                   style={{ cursor: "pointer" }}
                   onClick={() =>
                     setMenuOpen(
@@ -450,7 +463,7 @@ await axios.delete(
                   }
                 >
                   <MoreVertical size={16} />
-                </div>
+                </div> */}
 
                 {menuOpen === `exp-${exp.id}` && (
                   <div
@@ -576,8 +589,8 @@ await axios.delete(
         </section>
 
         {/* Monthly Statement Button */}
-        <button 
-          onClick={() => navigate("/parent-monthly-statement")} 
+        <button
+          onClick={() => navigate("/parent-monthly-statement")}
           className="monthly-statement-btn"
         >
           Monthly Statement

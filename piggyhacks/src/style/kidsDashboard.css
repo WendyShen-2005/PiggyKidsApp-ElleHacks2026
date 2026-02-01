@@ -153,14 +153,14 @@
 
 .bar {
   width: 100%;
-  background-color: #fbcfe8;
+  background-color: #f489b9;
   border-radius: 1rem 1rem 0 0;
   position: relative;
   cursor: pointer;
 }
 
 .bar:hover {
-  background-color: #f472b6;
+  background-color: #f489b9;
 }
 
 .tooltip {
@@ -182,7 +182,7 @@
 .bar-label {
   font-size: 0.5rem;
   font-weight: 700;
-  color: #db2777;
+  color: #f489b9;
   margin-bottom: 0.25rem;
   opacity: 0;
 }

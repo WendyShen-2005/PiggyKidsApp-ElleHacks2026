@@ -16,24 +16,13 @@ import axios from "axios";
 
 import AddTaskPopup from "../components/AddTaskPopup.jsx";
 
-// const INITIAL_TASKS = [
-//   { id: 1, title: "Clean the Room", amount: 5, status: "pending" },
-//   { id: 2, title: "Wash the Dishes", amount: 3, status: "completed" },
-//   { id: 3, title: "Feed the Dog", amount: 2, status: "pending" },
-// ];
-
-const INITIAL_EXPENSES = [
-  { id: 1, category: "Toys", amount: 15 },
-  { id: 2, category: "Candy", amount: 2 },
-  { id: 3, category: "Snack", amount: 5 },
-];
-
 export default function ParentDashboard() {
   const navigate = useNavigate();
   const [tasks, setTasks] = useState([]);
-  const [expenses, setExpenses] = useState(INITIAL_EXPENSES);
+  const [expenses, setExpenses] = useState([]);
   const [balance, setBalance] = useState(50);
   const [editExpense, setEditExpense] = useState(null);
+
 
   const [newTask, setNewTask] = useState(null);
 
@@ -53,8 +42,52 @@ export default function ParentDashboard() {
     }
   };
 
+  const createExpense = async (expense) => {
+  try {
+    const res = await axios.post("http://localhost:5000/expenses", {
+      category: expense.name,
+      price: expense.amount,
+      date: new Date().toISOString(),
+    });
+
+    // Re-fetch expenses so UI matches DB
+    await fetchExpenses();
+
+    // Update balance
+    setBalance((prev) => prev - expense.amount);
+
+    console.log("Expense created:", res.data);
+  } catch (err) {
+    console.error("Failed to create expense:", err);
+  }
+};
+
+
+  const fetchExpenses = async () => {
+  try {
+    const res = await axios.get("http://localhost:5000/expenses");
+
+    if (Array.isArray(res.data)) {
+      const mapped = res.data.map((e) => ({
+        id: e._id,          // Mongo _id → id
+        category: e.category,
+        amount: e.price,   // price → amount
+        date: e.date,
+      }));
+
+      setExpenses(mapped);
+    } else {
+      setExpenses([]);
+    }
+  } catch (err) {
+    console.error("Failed to fetch expenses:", err);
+  }
+};
+
+
   useEffect(() => {
     fetchTasks();
+    fetchExpenses();
   }, []);
 
   // Helper: format today's date
@@ -529,33 +562,14 @@ export default function ParentDashboard() {
                   </button>
                   <button
                     className="upload-btn"
-                    onClick={() => {
+                    onClick={async () => {
                       if (editExpense.id) {
-                        // Modify existing
-                        setExpenses((prev) =>
-                          prev.map((e) =>
-                            e.id === editExpense.id
-                              ? {
-                                  ...e,
-                                  category: editExpense.name,
-                                  amount: editExpense.amount,
-                                }
-                              : e,
-                          ),
-                        );
+                        // (Optional) You can later wire PUT /expenses/:id here
+                        console.warn("Edit expense not wired to API yet");
                       } else {
-                        // Add new
-                        setExpenses((prev) => [
-                          ...prev,
-                          {
-                            id: Date.now(),
-                            category: editExpense.name,
-                            amount: editExpense.amount,
-                            createdAt: new Date().toISOString(),
-                          },
-                        ]);
+                        await createExpense(editExpense);
                       }
-                      setBalance((prev) => prev - editExpense.amount);
+
                       setEditExpense(null);
                     }}
                   >

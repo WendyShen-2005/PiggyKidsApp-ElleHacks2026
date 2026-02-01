@@ -59,6 +59,7 @@ const historicaltasks = usersConn.model("HistoricalTasks", new mongoose.Schema({
 const family = usersConn.model("FamilyIds", new mongoose.Schema({}, { strict: false }), "family_ids");
 const stocksperuser = usersConn.model("StocksPerUser", new mongoose.Schema({}, { strict: false }), "stocks_per_user");
 const tasks = usersConn.model("Tasks", new mongoose.Schema({}, { strict: false }), "tasks");
+const expenses = usersConn.model("Expenses", new mongoose.Schema({}, { strict: false }), "expenses");
 
 const apple = stocksConn.model("Apple", new mongoose.Schema({}, { strict: false }), "apple");
 const banana = stocksConn.model("Banana", new mongoose.Schema({}, { strict: false }), "banana");
@@ -201,6 +202,17 @@ app.get("/stocks/strawberry", async (req, res) => {
     res.json(data[0].price);
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+// GET all expenses
+app.get("/expenses", async (req, res) => {
+  try {
+    const allExpenses = await expenses.find({});
+    console.log(allExpenses)
+    res.status(200).json(allExpenses);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to fetch expenses" });
   }
 });
 
@@ -352,5 +364,26 @@ app.delete("/tasks/:docId/:taskId/delete", async (req, res) => {
   }
 });
 
+app.post("/expenses", async (req, res) => {
+  try {
+    const { category, price, date } = req.body;
 
+    // Basic validation
+    if (!category || price == null) {
+      return res.status(400).json({
+        message: "category and price are required",
+      });
+    }
 
+    const newExpense = await expenses.create({
+      category,
+      price: Number(price),
+      date: date || new Date().toLocaleDateString(),
+    });
+
+    res.status(201).json(newExpense);
+  } catch (err) {
+    console.error("Failed to add expense:", err);
+    res.status(500).json({ message: "Failed to add expense" });
+  }
+});

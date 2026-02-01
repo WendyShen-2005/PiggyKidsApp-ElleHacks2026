@@ -28,65 +28,66 @@ export default function ParentTaskPage() {
     setNewTask({ title: "", amount: "" });
   };
 
- // -----------------------------
-// Remove task and move to history
-// -----------------------------
+  // -----------------------------
+  // Remove task and move to history
+  // -----------------------------
 
-// -----------------------------
-// Remove task locally and in DB only (no history)
-// -----------------------------
-const removeTaskNoHistory = async (taskId) => {
-  try {
-    // 1️⃣ Delete from current tasks in DB
-    // Suppose you have the docId stored somewhere (maybe passed from parent)
-    const docId = "697e4715ca16bfae68aef315";
+  // -----------------------------
+  // Remove task locally and in DB only (no history)
+  // -----------------------------
+  const removeTaskNoHistory = async (taskId) => {
+    try {
+      // 1️⃣ Delete from current tasks in DB
+      // Suppose you have the docId stored somewhere (maybe passed from parent)
+      const docId = "697e4715ca16bfae68aef315";
 
-    console.log(typeof taskId, taskId); // should be "number"
-    await axios.delete(`http://localhost:5000/tasks/${docId}/${taskId}/delete`);
+      console.log(typeof taskId, taskId); // should be "number"
+      await axios.delete(
+        `http://localhost:5000/tasks/${docId}/${taskId}/delete`,
+      );
 
+      // 2️⃣ Update frontend state
+      setTasks((prev) => prev.filter((t) => t.id !== taskId));
+      setMenuOpen(null);
 
-    // 2️⃣ Update frontend state
-    setTasks((prev) => prev.filter((t) => t.id !== taskId));
-    setMenuOpen(null);
+      console.log(`Task ${taskId} removed successfully.`);
+    } catch (err) {
+      console.error("Failed to remove task:", err);
+    }
+  };
 
-    console.log(`Task ${taskId} removed successfully.`);
-  } catch (err) {
-    console.error("Failed to remove task:", err);
-  }
-};
+  const removeTask = async (task) => {
+    try {
+      // 1️⃣ Delete from current tasks in DB
+      const docId = "697e4715ca16bfae68aef315";
 
-const removeTask = async (task) => {
-  try {
-    // 1️⃣ Delete from current tasks in DB
-        const docId = "697e4715ca16bfae68aef315";
+      console.log(typeof task.id, task.id); // should be "number"
+      await axios.delete(
+        `http://localhost:5000/tasks/${docId}/${task.id}/delete`,
+      );
 
-    console.log(typeof task.id, task.id); // should be "number"
-    await axios.delete(`http://localhost:5000/tasks/${docId}/${task.id}/delete`);
+      // 2️⃣ Add to historical tasks
+      // Replace with your actual historicaltasks docId
+      const historicalDocId = "697e484fca16bfae68aef31c";
 
+      await axios.post(
+        `http://localhost:5000/historicaltasks/${historicalDocId}/add`,
+        {
+          price: task.amount,
+          desc: task.title,
+          childid: task.childid || 1, // adjust if your tasks have childid
+        },
+      );
 
-    // 2️⃣ Add to historical tasks
-    // Replace with your actual historicaltasks docId
-    const historicalDocId = "697e484fca16bfae68aef31c";
+      // 3️⃣ Update frontend state
+      setTasks((prev) => prev.filter((t) => t.id !== task.id));
+      setMenuOpen(null);
 
-    await axios.post(
-      `http://localhost:5000/historicaltasks/${historicalDocId}/add`,
-      {
-        price: task.amount,
-        desc: task.title,
-        childid: task.childid || 1, // adjust if your tasks have childid
-      }
-    );
-
-    // 3️⃣ Update frontend state
-    setTasks((prev) => prev.filter((t) => t.id !== task.id));
-    setMenuOpen(null);
-
-    console.log(`Task "${task.title}" moved to history successfully.`);
-  } catch (err) {
-    console.error("Failed to remove task:", err);
-  }
-};
-
+      console.log(`Task "${task.title}" moved to history successfully.`);
+    } catch (err) {
+      console.error("Failed to remove task:", err);
+    }
+  };
 
   // Confirm completed task
   const confirmTask = (id) => {
@@ -110,6 +111,14 @@ const removeTask = async (task) => {
     <div className="tasks-page">
       <div className="tasks-card">
         <div className="tasks-header">
+          <button
+            className="back-btn"
+            onClick={() => navigate(-1)}
+            aria-label="Go back to Parent Dashboard"
+          >
+            <span className="kids-title">Parent Dashboard</span>
+          </button>
+
           <h2>Task Board</h2>
           <button className="statement-btn" onClick={addTask}>
             <Plus size={16} />
@@ -120,7 +129,10 @@ const removeTask = async (task) => {
         {/* Sticky Notes */}
         <div className="task-notes">
           {tasks.map((task) => (
-            <div key={task.id} className={`task-note ${task.completed ? "completed" : "pending"}`}>
+            <div
+              key={task.id}
+              className={`task-note ${task.completed ? "completed" : "pending"}`}
+            >
               <div className="thumbtack"></div>
 
               {/* 3 dots menu */}
@@ -164,9 +176,12 @@ const removeTask = async (task) => {
                         Modify
                       </div>
 
-                       <div className="menu-item" onClick={() => removeTaskNoHistory(task.id)}>
-                          Remove
-                        </div>
+                      <div
+                        className="menu-item"
+                        onClick={() => removeTaskNoHistory(task.id)}
+                      >
+                        Remove
+                      </div>
                     </>
                   )}
                   {task.completed === true && (
@@ -201,10 +216,6 @@ const removeTask = async (task) => {
             </div>
           ))}
         </div>
-
-        <button className="back-btn" onClick={() => navigate(-1)}>
-          ← Back
-        </button>
 
         {/* Edit Task Popup */}
         {editTask && (

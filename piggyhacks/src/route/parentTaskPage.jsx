@@ -4,6 +4,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import "../style/kidsTaskPage.css";
 import AddTaskPopup from "../components/AddTaskPopup.jsx";
 
+import axios from "axios";
+
 export default function ParentTaskPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -29,11 +31,65 @@ export default function ParentTaskPage() {
     setNewTask({ title: "", amount: "" });
   };
 
-  // Remove task
-  const removeTask = (id) => {
-    setTasks((prev) => prev.filter((t) => t.id !== id));
+ // -----------------------------
+// Remove task and move to history
+// -----------------------------
+
+// -----------------------------
+// Remove task locally and in DB only (no history)
+// -----------------------------
+const removeTaskNoHistory = async (taskId) => {
+  try {
+    // 1️⃣ Delete from current tasks in DB
+    // Suppose you have the docId stored somewhere (maybe passed from parent)
+    const docId = "697e4715ca16bfae68aef315";
+
+    console.log(typeof taskId, taskId); // should be "number"
+    await axios.delete(`http://localhost:5000/tasks/${docId}/${taskId}/delete`);
+
+
+    // 2️⃣ Update frontend state
+    setTasks((prev) => prev.filter((t) => t.id !== taskId));
     setMenuOpen(null);
-  };
+
+    console.log(`Task ${taskId} removed successfully.`);
+  } catch (err) {
+    console.error("Failed to remove task:", err);
+  }
+};
+
+const removeTask = async (task) => {
+  try {
+    // 1️⃣ Delete from current tasks in DB
+        const docId = "697e4715ca16bfae68aef315";
+
+    console.log(typeof task.id, task.id); // should be "number"
+    await axios.delete(`http://localhost:5000/tasks/${docId}/${task.id}/delete`);
+
+
+    // 2️⃣ Add to historical tasks
+    // Replace with your actual historicaltasks docId
+    const historicalDocId = "697e484fca16bfae68aef31c";
+
+    await axios.post(
+      `http://localhost:5000/historicaltasks/${historicalDocId}/add`,
+      {
+        price: task.amount,
+        desc: task.title,
+        childid: task.childid || 1, // adjust if your tasks have childid
+      }
+    );
+
+    // 3️⃣ Update frontend state
+    setTasks((prev) => prev.filter((t) => t.id !== task.id));
+    setMenuOpen(null);
+
+    console.log(`Task "${task.title}" moved to history successfully.`);
+  } catch (err) {
+    console.error("Failed to remove task:", err);
+  }
+};
+
 
   // Confirm completed task
   const confirmTask = (id) => {
@@ -111,12 +167,9 @@ export default function ParentTaskPage() {
                         Modify
                       </div>
 
-                      <div
-                        className="menu-item"
-                        onClick={() => removeTask(task.id)}
-                      >
-                        Remove
-                      </div>
+                       <div className="menu-item" onClick={() => removeTaskNoHistory(task.id)}>
+                          Remove
+                        </div>
                     </>
                   )}
                   {task.completed === true && (
@@ -130,10 +183,11 @@ export default function ParentTaskPage() {
 
                       <div
                         className="menu-item"
-                        onClick={() => removeTask(task.id)}
+                        onClick={() => removeTask(task)} // pass full task instead of just id
                       >
-                        Remove
+                        Confirm Payment & Remove Task
                       </div>
+
                       <div
                         className="menu-item"
                         onClick={() => navigate("/tasks/history")}

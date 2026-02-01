@@ -123,10 +123,53 @@ export default function ParentDashboard() {
     setEditTask(null);
   };
 
-  const removeTask = (id) => {
-    setTasks((prev) => prev.filter((t) => t.id !== id));
-    setMenuOpen(null);
+  // -----------------------------
+// Remove task locally and in DB only (no history)
+// -----------------------------
+  const removeTaskNoHistory = async (taskId) => {
+    try {
+      // 1️⃣ Delete from current tasks in DB
+      await axios.delete(`http://localhost:5000/tasks/${taskId}/delete`);
+
+      // 2️⃣ Update frontend state
+      setTasks((prev) => prev.filter((t) => t.id !== taskId));
+      setMenuOpen(null);
+
+      console.log(`Task ${taskId} removed successfully.`);
+    } catch (err) {
+      console.error("Failed to remove task:", err);
+    }
   };
+
+
+  const removeTask = async (task) => {
+  try {
+    // 1️⃣ Remove from current tasks
+    await axios.delete(`http://localhost:5000/tasks/${task.id}/delete`);
+
+    // 2️⃣ Add to historical tasks
+    // Replace "697e484fca16bfae68aef31c" with your actual historicaltasks docId
+    const historicalDocId = "697e484fca16bfae68aef31c";
+
+    await axios.post(
+      `http://localhost:5000/historicaltasks/${historicalDocId}/add`,
+      {
+        price: task.amount,
+        desc: task.title,
+        childid: task.childid || 1, // provide childid if available
+      },
+    );
+
+    // 3️⃣ Update frontend state
+    setTasks((prev) => prev.filter((t) => t.id !== task.id));
+    setMenuOpen(null);
+
+    console.log(`Task "${task.title}" moved to history successfully.`);
+  } catch (err) {
+    console.error("Failed to remove task:", err);
+  }
+};
+
   return (
     <div className="parent-container">
       {/* Header */}
@@ -251,12 +294,10 @@ export default function ParentDashboard() {
                         >
                           Modify
                         </div>
-                        <div
-                          className="menu-item"
-                          onClick={() => removeTask(task.id)}
-                        >
+                        <div className="menu-item" onClick={() => removeTaskNoHistory(task.id)}>
                           Remove
                         </div>
+
                       </>
                     )}
                     {task.completed === true && (
@@ -267,11 +308,8 @@ export default function ParentDashboard() {
                         >
                           Confirm
                         </div> */}
-                        <div
-                          className="menu-item"
-                          onClick={() => removeTask(task.id)}
-                        >
-                          Remove
+                        <div className="menu-item" onClick={() => removeTask(task)}>
+                          Confirm Payment & Remove Task
                         </div>
                         <div
                           className="menu-item"

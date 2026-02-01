@@ -1,0 +1,93 @@
+.statement-page {
+  background: #fff6fb;
+  min-height: 100vh;
+  padding: 20px;
+  font-family: "Comic Sans MS", "Poppins", cursive;
+}
+
+.flex-center-align {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.kids-title {
+  font-size: 24px;
+  text-decoration: none;
+  color: #ff69b4;
+  font-weight: bold;
+}
+
+.export-btn {
+  display: block;
+  margin: 0 auto 20px;
+  padding: 12px 20px;
+  background: #ffb6c1;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.statement-container {
+  background: white;
+  padding: 30px;
+  border-radius: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.statement-title {
+  text-align: center;
+  font-size: 36px;
+  color: #ff69b4;
+  margin-bottom: 10px;
+}
+
+.balance-title {
+  text-align: center;
+  font-size: 24px;
+  color: #4caf50;
+  margin-bottom: 30px;
+}
+
+.three-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+}
+
+.column h3 {
+  text-align: center;
+  color: #ff8fab;
+  margin-bottom: 10px;
+}
+
+.row {
+  background: #fff0f5;
+  padding: 8px;
+  margin-bottom: 6px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.box {
+  background: #e6fffa;
+  padding: 20px;
+  border-radius: 15px;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.box h4 {
+  font-size: 18px;
+  color: #00b894;
+}
+
+.box p {
+  font-size: 22px;
+  font-weight: bold;
+}

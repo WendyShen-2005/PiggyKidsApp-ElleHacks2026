@@ -1,9 +1,12 @@
 .kids-container {
   min-height: 100vh;
-  background-color: #fce7f3;
+  /* background-color: #fce7f3; */
   padding-bottom: 5rem;
-  font-family: sans-serif;
+  /* font-family: sans-serif; */
+  background: #fff6fb;
+  font-family: "Comic Sans MS", "Poppins", cursive;
 }
+
 
 .monthly-statement-btn {
   width: calc(100% - 40px);

@@ -1,7 +1,9 @@
 .parent-container {
   min-height: 100vh;
   background-color: #fce7f3;
-  font-family: sans-serif;
+  /* font-family: sans-serif; */
+  background: #fff6fb;
+  font-family: "Comic Sans MS", "Poppins", cursive;
   padding-bottom: 5rem;
 }
 

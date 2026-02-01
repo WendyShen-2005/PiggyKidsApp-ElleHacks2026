@@ -223,9 +223,9 @@ export default function ParentDashboard() {
         <h2 className="header-title">Parent Dashboard</h2>
 
         {/* RIGHT */}
-        <div className="header-right">
+        {/* <div className="header-right">
           <TaskPiggy tasks={tasks} />
-        </div>
+        </div> */}
       </header>
 
       <main className="parent-main">

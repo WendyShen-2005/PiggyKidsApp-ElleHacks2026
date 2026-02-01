@@ -95,7 +95,7 @@ export default function KidsDashboard() {
         </button>
         <h2 className="kids-title">My TeddyBank Dashboard</h2>
         {/* <div className="kids-avatar"></div> */}
-        <TaskPiggy tasks={tasks} />
+        {/* <TaskPiggy tasks={tasks} /> */}
       </header>
       <main className="kids-main">
         {/* Balance Display */}

@@ -145,11 +145,6 @@ export default function KidsTasksPage() {
           </div>
         )}
 
-        {/* Monthly Statement */}
-        <button className="statement-btn">
-          <FileText size={18} />
-          Monthly Statement
-        </button>
       </div>
     </div>
   );

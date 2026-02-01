@@ -48,7 +48,7 @@ export default function ParentMonthlyStatement() {
       {/* Top */}
       <div className="flex-center-align">
         <Link to="/parent-dashboard" className="kids-title">
-          My Piggy Dashboard
+          Parent Dashboard
         </Link>
       </div>
 

@@ -12,7 +12,7 @@ AI-Powered Stories: Using Google Gemini, Teddy translates raw transaction logs i
 
 Multiligual Support: Supports any language google can translate to, helping kids learn financial literacy in multiple languages at once.
 
-### The Tech Stack
+## The Tech Stack
 Hardware: Arduino Uno + Angle Sensor (Serial Communication).
 
 Frontend: React-based dashboard for task management and stock visualization.
@@ -47,3 +47,10 @@ Install Dependencies
 Hardware Setup: Flash the teddy_button.ino to your Arduino Uno.
 
 Environment Variables: Set up your .env with your Gemini, ElevenLabs, and MongoDB API keys.
+
+## See it:
+Watch us on Youtube: https://youtu.be/IrmgggVXfd8 
+<img width="806" height="389" alt="image" src="https://github.com/user-attachments/assets/ba7406d1-c7b6-4f03-b675-13d8deb8e56b" />
+<img width="806" height="395" alt="image" src="https://github.com/user-attachments/assets/8b22ae7f-eb00-48ce-912f-422b4f3236dd" />
+<img width="806" height="392" alt="image" src="https://github.com/user-attachments/assets/60891283-ce49-4bcf-81a1-95e643f7e7df" />
+<img width="806" height="397" alt="image" src="https://github.com/user-attachments/assets/f0f05f6a-2da6-4df8-84c6-251af0fbf127" />

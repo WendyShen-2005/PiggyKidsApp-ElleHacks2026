@@ -98,35 +98,6 @@ export default function ParentDashboard() {
     );
   };
 
-  //   // Whenever a task is confirmed (done)
-  //   const confirmTask = (taskId) => {
-  //     setTasks((prev) =>
-  //       prev.map((task) => {
-  //         if (task.id === taskId) {
-  //           const updatedTask = {
-  //             ...task,
-  //             status: "confirmed",
-  //             completedAt: new Date().toISOString(),
-  //           };
-
-  //           // Add to daily summary log
-  //           setSummary((prevSummary) => [
-  //             ...prevSummary,
-  //             {
-  //               type: "task",
-  //               title: updatedTask.title,
-  //               amount: updatedTask.amount,
-  //               createdAt: updatedTask.completedAt,
-  //             },
-  //           ]);
-
-  //           return updatedTask;
-  //         }
-  //         return task;
-  //       }),
-  //     );
-  //   };
-
   // When adding a new expense
   const saveExpense = (expense) => {
     setExpenses((prev) => [...prev, expense]);
@@ -159,7 +130,11 @@ export default function ParentDashboard() {
   const removeTaskNoHistory = async (taskId) => {
     try {
       // 1️⃣ Delete from current tasks in DB
-      await axios.delete(`http://localhost:5000/tasks/${taskId}/delete`);
+const docId = "697e4715ca16bfae68aef315"; // usually your tasks DB doc _id
+
+await axios.delete(
+  `http://localhost:5000/tasks/${docId}/${taskId}/delete`
+);
 
       // 2️⃣ Update frontend state
       setTasks((prev) => prev.filter((t) => t.id !== taskId));
@@ -174,7 +149,11 @@ export default function ParentDashboard() {
   const removeTask = async (task) => {
     try {
       // 1️⃣ Remove from current tasks
-      await axios.delete(`http://localhost:5000/tasks/${task.id}/delete`);
+const docId = "697e4715ca16bfae68aef315"; // usually your tasks DB doc _id
+
+await axios.delete(
+  `http://localhost:5000/tasks/${docId}/${task.id}/delete`
+);
 
       // 2️⃣ Add to historical tasks
       // Replace "697e484fca16bfae68aef31c" with your actual historicaltasks docId

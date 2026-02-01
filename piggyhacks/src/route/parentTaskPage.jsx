@@ -38,7 +38,7 @@ export default function ParentTaskPage() {
   // Confirm completed task
   const confirmTask = (id) => {
     setTasks((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, status: "confirmed" } : t))
+      prev.map((t) => (t.id === id ? { ...t, status: "confirmed" } : t)),
     );
     setMenuOpen(null);
   };
@@ -47,8 +47,8 @@ export default function ParentTaskPage() {
   const saveTask = (id, newTitle, newAmount) => {
     setTasks((prev) =>
       prev.map((t) =>
-        t.id === id ? { ...t, title: newTitle, amount: Number(newAmount) } : t
-      )
+        t.id === id ? { ...t, title: newTitle, amount: Number(newAmount) } : t,
+      ),
     );
     setEditTask(null);
   };
@@ -72,7 +72,12 @@ export default function ParentTaskPage() {
 
               {/* 3 dots menu */}
               <div
-                style={{ position: "absolute", top: 8, right: 8, cursor: "pointer" }}
+                style={{
+                  position: "absolute",
+                  top: 8,
+                  right: 8,
+                  cursor: "pointer",
+                }}
                 onClick={() =>
                   setMenuOpen(menuOpen === task.id ? null : task.id)
                 }
@@ -94,25 +99,47 @@ export default function ParentTaskPage() {
                     zIndex: 5,
                   }}
                 >
-                  {task.status === "pending" && (
+                  {task.completed === false && (
                     <>
-                      <div className="menu-item" onClick={() => setEditTask(task)}>
+                      <div
+                        className="menu-item"
+                        onClick={() => {
+                          setEditTask(task);
+                          setMenuOpen(null);
+                        }}
+                      >
                         Modify
                       </div>
-                      <div className="menu-item" onClick={() => removeTask(task.id)}>
+
+                      <div
+                        className="menu-item"
+                        onClick={() => removeTask(task.id)}
+                      >
                         Remove
                       </div>
                     </>
                   )}
-                  {task.status === "completed" && (
+                  {task.completed === true && (
                     <>
-                      <div className="menu-item" onClick={() => confirmTask(task.id)}>
-                        Confirm
-                      </div>
-                      <div className="menu-item" onClick={() => removeTask(task.id)}>
+                      {/* <div
+                                        className="menu-item"
+                                        onClick={() => confirmTask(task.id)}
+                                      >
+                                        Confirm
+                                      </div> */}
+
+                      <div
+                        className="menu-item"
+                        onClick={() => removeTask(task.id)}
+                      >
                         Remove
                       </div>
-                      <div className="menu-item">Go to History</div>
+                      <div
+                        className="menu-item"
+                        onClick={() => navigate("/tasks/history")}
+                      >
+                        Go to History
+                      </div>
                     </>
                   )}
                 </div>
@@ -132,9 +159,19 @@ export default function ParentTaskPage() {
         {editTask && (
           <div className="popup-overlay">
             <div className="popup-card">
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
                 <h3>Edit Task</h3>
-                <X size={20} style={{ cursor: "pointer" }} onClick={() => setEditTask(null)} />
+                <X
+                  size={20}
+                  style={{ cursor: "pointer" }}
+                  onClick={() => setEditTask(null)}
+                />
               </div>
 
               <div className="proof-row">
@@ -178,7 +215,7 @@ export default function ParentTaskPage() {
             </div>
           </div>
         )}
-        
+
         {newTask && (
           <AddTaskPopup
             newTask={newTask}
@@ -190,7 +227,6 @@ export default function ParentTaskPage() {
             }}
           />
         )}
-
       </div>
     </div>
   );

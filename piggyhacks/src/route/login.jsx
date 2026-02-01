@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { PiggyBank, User, Baby, ArrowRight } from "lucide-react";
 import "../style/login.css";
 import { useNavigate } from "react-router-dom";
-
+import piggyImage from "../components/teddybank.png"
 export default function LoginPage() {
   const [loginType, setLoginType] = useState("parent");
   const navigate = useNavigate();
@@ -17,9 +17,9 @@ export default function LoginPage() {
       <div className="login-card">
         <div className="login-header">
           <div className="pig-icon-wrapper">
-            <PiggyBank size={40} className="pig-icon" />
+            <img src={piggyImage} alt="Piggy Bank" className="pig-icon" />
           </div>
-          <h1>Piggy Hacks</h1>
+          <h1>TeddyBank</h1>
         </div>
 
         <div className="login-toggle">

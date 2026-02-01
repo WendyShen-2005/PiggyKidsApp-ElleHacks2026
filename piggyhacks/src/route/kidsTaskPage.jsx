@@ -66,7 +66,7 @@ export default function KidsTasksPage() {
         <div className="tasks-header">
           <div className="flex-center-align">
             <Link to="/kids-dashboard" className="kids-title">
-              My Piggy Dashboard
+              My TeddyBank Dashboard
             </Link>
           </div>
           <h2>TASKS</h2>

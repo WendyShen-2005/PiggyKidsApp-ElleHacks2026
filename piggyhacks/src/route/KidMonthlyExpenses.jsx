@@ -48,7 +48,7 @@ export default function KidMonthlyStatement() {
       {/* Top */}
       <div className="flex-center-align">
         <Link to="/kids-dashboard" className="kids-title">
-          My Piggy Dashboard
+          My TeddyBank Dashboard
         </Link>
       </div>
 

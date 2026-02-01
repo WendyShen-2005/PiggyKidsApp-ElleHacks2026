@@ -110,7 +110,7 @@ const FarmersMarket = () => {
         <div className="flex-center-align">
           <div className="flex-center-align">
             <Link to="/kids-dashboard" className="kids-title">
-              My Piggy Dashboard
+              My TeddyBank Dashboard
             </Link>
           </div>
             {/* <div className="back-btn">  <Link to="/kids-dashboard">⬅️ Dashboard</Link></div> */} 

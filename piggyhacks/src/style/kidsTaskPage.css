@@ -238,7 +238,7 @@
 
 /* Monthly statement button */
 .statement-btn {
-  display: flex;
+  /* display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
@@ -249,7 +249,16 @@
   color: white;
   font-weight: bold;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background 0.2s ease; */
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background-color: #f472b6;
+  color: white;
+  border-radius: 1rem;
+  padding: 0.5rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .statement-btn:hover {

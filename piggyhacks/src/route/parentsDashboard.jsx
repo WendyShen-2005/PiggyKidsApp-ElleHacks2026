@@ -581,7 +581,7 @@ export default function ParentDashboard() {
             </div>
           )}
         </section>
-        <section className="daily-summary">
+        {/* <section className="daily-summary">
           <h3>Today's Summary</h3>
           <ul>
             {summary

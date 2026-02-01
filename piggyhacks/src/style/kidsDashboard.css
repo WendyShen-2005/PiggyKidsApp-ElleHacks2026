@@ -1,14 +1,41 @@
 .kids-container {
   min-height: 100vh;
-  background-color: #fce7f3;
+  /* background-color: #fce7f3; */
   padding-bottom: 5rem;
-  font-family: sans-serif;
+  /* font-family: sans-serif; */
+  background: #fff6fb;
+  font-family: "Comic Sans MS", "Poppins", cursive;
 }
 
+
+.monthly-statement-btn {
+  width: calc(100% - 40px);
+  padding: 16px;
+  margin: 16px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.monthly-statement-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
+}
+
+.monthly-statement-btn:active {
+  transform: translateY(0);
+}
+
+
 .kids-header {
-  position: relative;          /* needed for absolute positioning */
+  position: relative; /* needed for absolute positioning */
   display: flex;
-  justify-content: center;     /* center the title */
+  justify-content: center; /* center the title */
   align-items: center;
   padding: 1.5rem;
   background-color: rgba(248, 158, 193, 0.982);
@@ -20,11 +47,11 @@
 
 .profile-btn {
   position: absolute;
-  left: 1.5rem;                /* pinned to left */
+  left: 1.5rem; /* pinned to left */
   background: white;
   padding: 0.5rem;
   border-radius: 50%;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .kids-title {
@@ -126,14 +153,14 @@
 
 .bar {
   width: 100%;
-  background-color: #fbcfe8;
+  background-color: #f489b9;
   border-radius: 1rem 1rem 0 0;
   position: relative;
   cursor: pointer;
 }
 
 .bar:hover {
-  background-color: #f472b6;
+  background-color: #f489b9;
 }
 
 .tooltip {
@@ -155,7 +182,7 @@
 .bar-label {
   font-size: 0.5rem;
   font-weight: 700;
-  color: #db2777;
+  color: #f489b9;
   margin-bottom: 0.25rem;
   opacity: 0;
 }
@@ -202,6 +229,50 @@
 .farm-btn {
   background-color: #10b981;
   border-bottom-color: #047857;
+}
+/* Expenses Section */
+.expenses-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.expense-btns {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.expense-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background-color: #f472b6;
+  color: white;
+  border-radius: 1rem;
+  padding: 0.5rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.expenses-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.expense-item {
+  display: flex;
+  justify-content: space-between;
+  background: white;
+  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.expense-amount {
+  font-weight: 700;
+  color: #db2777;
 }
 
 .floating-pig {

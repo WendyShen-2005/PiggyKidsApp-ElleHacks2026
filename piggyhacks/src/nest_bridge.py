@@ -114,3 +114,4 @@ while True:
 
             # Speak it
             pig_speak(final_script)
+            

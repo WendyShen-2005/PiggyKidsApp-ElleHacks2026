@@ -1,37 +1,98 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MoreVertical, Plus, X } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "../style/kidsTaskPage.css";
+import AddTaskPopup from "../components/AddTaskPopup.jsx";
+
+import axios from "axios";
 
 export default function ParentTaskPage() {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const [tasks, setTasks] = useState([
-    { id: 1, title: "Clean the Room", amount: 5, status: "pending" },
-    { id: 2, title: "Wash the Dishes", amount: 3, status: "completed" },
-  ]);
+  const [tasks, setTasks] = useState([]);
+
+  // Load tasks from navigation state if available
+  useEffect(() => {
+    if (location.state?.tasks) {
+      setTasks(location.state.tasks);
+    }
+  }, [location.state?.tasks]);
 
   const [menuOpen, setMenuOpen] = useState(null);
   const [editTask, setEditTask] = useState(null); // task being edited
+  const [newTask, setNewTask] = useState(null);
 
-  // Add new task
+  // Open Add Task popup
   const addTask = () => {
-    setTasks((prev) => [
-      ...prev,
-      { id: Date.now(), title: "New Task", amount: 5, status: "pending" },
-    ]);
+    setNewTask({ title: "", amount: "" });
   };
 
-  // Remove task
-  const removeTask = (id) => {
-    setTasks((prev) => prev.filter((t) => t.id !== id));
-    setMenuOpen(null);
+  // -----------------------------
+  // Remove task and move to history
+  // -----------------------------
+
+  // -----------------------------
+  // Remove task locally and in DB only (no history)
+  // -----------------------------
+  const removeTaskNoHistory = async (taskId) => {
+    try {
+      // 1️⃣ Delete from current tasks in DB
+      // Suppose you have the docId stored somewhere (maybe passed from parent)
+      const docId = "697e4715ca16bfae68aef315";
+
+      console.log(typeof taskId, taskId); // should be "number"
+      await axios.delete(
+        `http://localhost:5000/tasks/${docId}/${taskId}/delete`,
+      );
+
+      // 2️⃣ Update frontend state
+      setTasks((prev) => prev.filter((t) => t.id !== taskId));
+      setMenuOpen(null);
+
+      console.log(`Task ${taskId} removed successfully.`);
+    } catch (err) {
+      console.error("Failed to remove task:", err);
+    }
+  };
+
+  const removeTask = async (task) => {
+    try {
+      // 1️⃣ Delete from current tasks in DB
+      const docId = "697e4715ca16bfae68aef315";
+
+      console.log(typeof task.id, task.id); // should be "number"
+      await axios.delete(
+        `http://localhost:5000/tasks/${docId}/${task.id}/delete`,
+      );
+
+      // 2️⃣ Add to historical tasks
+      // Replace with your actual historicaltasks docId
+      const historicalDocId = "697e484fca16bfae68aef31c";
+
+      await axios.post(
+        `http://localhost:5000/historicaltasks/${historicalDocId}/add`,
+        {
+          price: task.amount,
+          desc: task.title,
+          childid: task.childid || 1, // adjust if your tasks have childid
+        },
+      );
+
+      // 3️⃣ Update frontend state
+      setTasks((prev) => prev.filter((t) => t.id !== task.id));
+      setMenuOpen(null);
+
+      console.log(`Task "${task.title}" moved to history successfully.`);
+    } catch (err) {
+      console.error("Failed to remove task:", err);
+    }
   };
 
   // Confirm completed task
   const confirmTask = (id) => {
     setTasks((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, status: "confirmed" } : t))
+      prev.map((t) => (t.id === id ? { ...t, status: "confirmed" } : t)),
     );
     setMenuOpen(null);
   };
@@ -40,8 +101,8 @@ export default function ParentTaskPage() {
   const saveTask = (id, newTitle, newAmount) => {
     setTasks((prev) =>
       prev.map((t) =>
-        t.id === id ? { ...t, title: newTitle, amount: Number(newAmount) } : t
-      )
+        t.id === id ? { ...t, title: newTitle, amount: Number(newAmount) } : t,
+      ),
     );
     setEditTask(null);
   };
@@ -50,6 +111,14 @@ export default function ParentTaskPage() {
     <div className="tasks-page">
       <div className="tasks-card">
         <div className="tasks-header">
+          <button
+            className="back-btn"
+            onClick={() => navigate(-1)}
+            aria-label="Go back to Parent Dashboard"
+          >
+            <span className="kids-title">Parent Dashboard</span>
+          </button>
+
           <h2>Task Board</h2>
           <button className="statement-btn" onClick={addTask}>
             <Plus size={16} />
@@ -60,12 +129,20 @@ export default function ParentTaskPage() {
         {/* Sticky Notes */}
         <div className="task-notes">
           {tasks.map((task) => (
-            <div key={task.id} className={`task-note ${task.status}`}>
+            <div
+              key={task.id}
+              className={`task-note ${task.completed ? "completed" : "pending"}`}
+            >
               <div className="thumbtack"></div>
 
               {/* 3 dots menu */}
               <div
-                style={{ position: "absolute", top: 8, right: 8, cursor: "pointer" }}
+                style={{
+                  position: "absolute",
+                  top: 8,
+                  right: 8,
+                  cursor: "pointer",
+                }}
                 onClick={() =>
                   setMenuOpen(menuOpen === task.id ? null : task.id)
                 }
@@ -87,25 +164,48 @@ export default function ParentTaskPage() {
                     zIndex: 5,
                   }}
                 >
-                  {task.status === "pending" && (
+                  {task.completed === false && (
                     <>
-                      <div className="menu-item" onClick={() => setEditTask(task)}>
+                      <div
+                        className="menu-item"
+                        onClick={() => {
+                          setEditTask(task);
+                          setMenuOpen(null);
+                        }}
+                      >
                         Modify
                       </div>
-                      <div className="menu-item" onClick={() => removeTask(task.id)}>
+
+                      <div
+                        className="menu-item"
+                        onClick={() => removeTaskNoHistory(task.id)}
+                      >
                         Remove
                       </div>
                     </>
                   )}
-                  {task.status === "completed" && (
+                  {task.completed === true && (
                     <>
-                      <div className="menu-item" onClick={() => confirmTask(task.id)}>
-                        Confirm
+                      {/* <div
+                                        className="menu-item"
+                                        onClick={() => confirmTask(task.id)}
+                                      >
+                                        Confirm
+                                      </div> */}
+
+                      <div
+                        className="menu-item"
+                        onClick={() => removeTask(task)} // pass full task instead of just id
+                      >
+                        Confirm Payment & Remove Task
                       </div>
-                      <div className="menu-item" onClick={() => removeTask(task.id)}>
-                        Remove
+
+                      <div
+                        className="menu-item"
+                        onClick={() => navigate("/tasks/history")}
+                      >
+                        Go to History
                       </div>
-                      <div className="menu-item">Go to History</div>
                     </>
                   )}
                 </div>
@@ -117,17 +217,23 @@ export default function ParentTaskPage() {
           ))}
         </div>
 
-        <button className="back-btn" onClick={() => navigate(-1)}>
-          ← Back
-        </button>
-
         {/* Edit Task Popup */}
         {editTask && (
           <div className="popup-overlay">
             <div className="popup-card">
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
                 <h3>Edit Task</h3>
-                <X size={20} style={{ cursor: "pointer" }} onClick={() => setEditTask(null)} />
+                <X
+                  size={20}
+                  style={{ cursor: "pointer" }}
+                  onClick={() => setEditTask(null)}
+                />
               </div>
 
               <div className="proof-row">
@@ -170,6 +276,18 @@ export default function ParentTaskPage() {
               </div>
             </div>
           </div>
+        )}
+
+        {newTask && (
+          <AddTaskPopup
+            newTask={newTask}
+            setNewTask={setNewTask}
+            onTaskAdded={(res) => {
+              if (res && res.task) {
+                setTasks((prev) => [...prev, res.task]);
+              }
+            }}
+          />
         )}
       </div>
     </div>

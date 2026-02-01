@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   PiggyBank,
@@ -12,30 +12,88 @@ import {
 import "../style/parentDashboard.css";
 import TaskPiggy from "../components/taskPiggy.jsx";
 
-const INITIAL_TASKS = [
-  { id: 1, title: "Clean the Room", amount: 5, status: "pending" },
-  { id: 2, title: "Wash the Dishes", amount: 3, status: "completed" },
-  { id: 3, title: "Feed the Dog", amount: 2, status: "pending" },
-];
+import axios from "axios";
 
-const INITIAL_EXPENSES = [
-  { id: 1, category: "Toys", amount: 15 },
-  { id: 2, category: "Candy", amount: 2 },
-  { id: 3, category: "Snack", amount: 5 },
-];
+import AddTaskPopup from "../components/AddTaskPopup.jsx";
 
 export default function ParentDashboard() {
   const navigate = useNavigate();
-  const [tasks, setTasks] = useState(INITIAL_TASKS);
-  const [expenses, setExpenses] = useState(INITIAL_EXPENSES);
+  const [tasks, setTasks] = useState([]);
+  const [expenses, setExpenses] = useState([]);
   const [balance, setBalance] = useState(50);
   const [editExpense, setEditExpense] = useState(null);
+
+  const [newTask, setNewTask] = useState(null);
 
   const [menuOpen, setMenuOpen] = useState(null);
   const [editTask, setEditTask] = useState(null); // task being edited
 
   // Inside ParentDashboard component, after your states:
   const [summary, setSummary] = useState([]); // Daily summary logs
+
+  const fetchTasks = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/tasks");
+      if (Array.isArray(res.data)) setTasks(res.data);
+      else setTasks([]);
+    } catch (err) {
+      console.error("Failed to fetch tasks:", err);
+    }
+  };
+
+  const data = [45, 65, 55, 85, 110, 130];
+
+  // Scale heights to 100% max
+  const maxValue = Math.max(...data);
+  const scaledData = data.map((h) => (h / maxValue) * 100);
+
+  const interestRate = "+3.5%";
+
+  const createExpense = async (expense) => {
+    try {
+      const res = await axios.post("http://localhost:5000/expenses", {
+        category: expense.name,
+        price: expense.amount,
+        date: new Date().toISOString(),
+      });
+
+      // Re-fetch expenses so UI matches DB
+      await fetchExpenses();
+
+      // Update balance
+      setBalance((prev) => prev - expense.amount);
+
+      console.log("Expense created:", res.data);
+    } catch (err) {
+      console.error("Failed to create expense:", err);
+    }
+  };
+
+  const fetchExpenses = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/expenses");
+
+      if (Array.isArray(res.data)) {
+        const mapped = res.data.map((e) => ({
+          id: e._id, // Mongo _id → id
+          category: e.category,
+          amount: e.price, // price → amount
+          date: e.date,
+        }));
+
+        setExpenses(mapped);
+      } else {
+        setExpenses([]);
+      }
+    } catch (err) {
+      console.error("Failed to fetch expenses:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchTasks();
+    fetchExpenses();
+  }, []);
 
   // Helper: format today's date
   const isToday = (dateStr) => {
@@ -47,35 +105,6 @@ export default function ParentDashboard() {
       d.getFullYear() === today.getFullYear()
     );
   };
-
-  //   // Whenever a task is confirmed (done)
-  //   const confirmTask = (taskId) => {
-  //     setTasks((prev) =>
-  //       prev.map((task) => {
-  //         if (task.id === taskId) {
-  //           const updatedTask = {
-  //             ...task,
-  //             status: "confirmed",
-  //             completedAt: new Date().toISOString(),
-  //           };
-
-  //           // Add to daily summary log
-  //           setSummary((prevSummary) => [
-  //             ...prevSummary,
-  //             {
-  //               type: "task",
-  //               title: updatedTask.title,
-  //               amount: updatedTask.amount,
-  //               createdAt: updatedTask.completedAt,
-  //             },
-  //           ]);
-
-  //           return updatedTask;
-  //         }
-  //         return task;
-  //       }),
-  //     );
-  //   };
 
   // When adding a new expense
   const saveExpense = (expense) => {
@@ -94,19 +123,6 @@ export default function ParentDashboard() {
     ]);
   };
 
-  const addTask = () => {
-    setTasks((prev) => [
-      ...prev,
-      { id: Date.now(), title: "New Task", amount: 5, status: "pending" },
-    ]);
-  };
-  const confirmTask = (taskId) => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === taskId ? { ...task, status: "confirmed" } : task,
-      ),
-    );
-  };
   const saveTask = (id, newTitle, newAmount) => {
     setTasks((prev) =>
       prev.map((t) =>
@@ -116,29 +132,91 @@ export default function ParentDashboard() {
     setEditTask(null);
   };
 
-  const removeTask = (id) => {
-    setTasks((prev) => prev.filter((t) => t.id !== id));
-    setMenuOpen(null);
+  // -----------------------------
+  // Remove task locally and in DB only (no history)
+  // -----------------------------
+  const removeTaskNoHistory = async (taskId) => {
+    try {
+      // 1️⃣ Delete from current tasks in DB
+      const docId = "697e4715ca16bfae68aef315"; // usually your tasks DB doc _id
+
+      await axios.delete(
+        `http://localhost:5000/tasks/${docId}/${taskId}/delete`,
+      );
+
+      // 2️⃣ Update frontend state
+      setTasks((prev) => prev.filter((t) => t.id !== taskId));
+      setMenuOpen(null);
+
+      console.log(`Task ${taskId} removed successfully.`);
+    } catch (err) {
+      console.error("Failed to remove task:", err);
+    }
   };
+
+  const removeTask = async (task) => {
+    try {
+      // 1️⃣ Remove from current tasks
+      const docId = "697e4715ca16bfae68aef315"; // usually your tasks DB doc _id
+
+      await axios.delete(
+        `http://localhost:5000/tasks/${docId}/${task.id}/delete`,
+      );
+
+      // 2️⃣ Add to historical tasks
+      // Replace "697e484fca16bfae68aef31c" with your actual historicaltasks docId
+      const historicalDocId = "697e484fca16bfae68aef31c";
+
+      await axios.post(
+        `http://localhost:5000/historicaltasks/${historicalDocId}/add`,
+        {
+          price: task.amount,
+          desc: task.title,
+          childid: task.childid || 1, // provide childid if available
+        },
+      );
+
+      // 3️⃣ Update frontend state
+      setTasks((prev) => prev.filter((t) => t.id !== task.id));
+      setMenuOpen(null);
+
+      console.log(`Task "${task.title}" moved to history successfully.`);
+    } catch (err) {
+      console.error("Failed to remove task:", err);
+    }
+  };
+
   return (
     <div className="parent-container">
       {/* Header */}
+      {/* Header */}
       <header className="parent-header">
-        <button onClick={() => navigate("/")} className="profile-btn">
-          <User size={20} />
-        </button>
+        {/* LEFT */}
+        <div className="header-left">
+          <div className="balance-card">
+            {/* Move the profile button inside here */}
+            <button onClick={() => navigate("/")} className="profile-btn">
+              <User size={20} />
+            </button>
+
+            <div className="balance-info">
+              <span className="balance-label">TOTAL BALANCE</span>
+              <span className="balance-amount">${balance.toFixed(2)}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* CENTER */}
         <h2 className="header-title">Parent Dashboard</h2>
-        {/* <div className="kids-avatar"></div> */}
-        <TaskPiggy tasks={tasks} />
+
+        {/* RIGHT */}
+        {/* <div className="header-right">
+          <TaskPiggy tasks={tasks} />
+        </div> */}
       </header>
 
       <main className="parent-main">
         {/* Balance */}
-        <section className="balance-card">
-          <p className="balance-label">Total Balance</p>
-          <h2 className="balance-amount">${balance.toFixed(2)}</h2>
-          <PiggyBank size={120} className="balance-bg-icon" />
-        </section>
 
         {/* Interest Graph */}
         <div className="interest-card">
@@ -146,21 +224,27 @@ export default function ParentDashboard() {
             <h3 className="interest-title">
               <TrendingUp size={16} /> My Interest Growth
             </h3>
-            <span className="growth-percent">+4.2%</span>
+            <span className="growth-percent">{interestRate}</span>
           </div>
+
           <div className="graph">
-            {[45, 65, 55, 85, 110, 130].map((h, i) => (
-              <div key={i} className="bar-wrapper">
+            {scaledData.map((h, i) => (
+              <div
+                key={i}
+                className="bar-wrapper"
+                style={{ height: h + "px" }}
+              >
                 <div className="bar" style={{ height: `${h}%` }}>
                   <div className="tooltip">
-                    <p className="week">Week {i + 1}</p>
-                    <p className="amount">+${(h * 0.1).toFixed(2)}</p>
+                    <p>Week {i + 1}</p>
+                    <p>+${(data[i] * 0.1).toFixed(2)}</p>
                   </div>
-                  <div className="bar-label">${(h * 0.1).toFixed(0)}</div>
                 </div>
+                <div className="bar-label">${Math.round(data[i] * 0.1)}</div>
               </div>
             ))}
           </div>
+
           <div className="graph-labels">
             <span>Month 1</span>
             <span>Month 2</span>
@@ -179,14 +263,20 @@ export default function ParentDashboard() {
             }}
           >
             <h3>Active Tasks</h3>
-            <button className="statement-btn" onClick={addTask}>
-              <Plus size={16} /> Quick Add
+            <button
+              className="statement-btn"
+              onClick={() => setNewTask({ title: "", amount: "" })}
+            >
+              <Plus size={16} /> Add Task
             </button>
           </div>
 
           <div className="task-notes">
             {tasks.slice(0, 4).map((task) => (
-              <div key={task.id} className={`task-note ${task.status}`}>
+              <div
+                key={task.id}
+                className={`task-note ${task.completed ? "completed" : ""}`}
+              >
                 <div className="thumbtack"></div>
 
                 {/* 3-dot menu */}
@@ -218,7 +308,7 @@ export default function ParentDashboard() {
                       zIndex: 5,
                     }}
                   >
-                    {task.status === "pending" && (
+                    {task.completed === false && (
                       <>
                         <div
                           className="menu-item"
@@ -228,25 +318,25 @@ export default function ParentDashboard() {
                         </div>
                         <div
                           className="menu-item"
-                          onClick={() => removeTask(task.id)}
+                          onClick={() => removeTaskNoHistory(task.id)}
                         >
                           Remove
                         </div>
                       </>
                     )}
-                    {task.status === "completed" && (
+                    {task.completed === true && (
                       <>
-                        <div
+                        {/* <div
                           className="menu-item"
                           onClick={() => confirmTask(task.id)}
                         >
                           Confirm
-                        </div>
+                        </div> */}
                         <div
                           className="menu-item"
-                          onClick={() => removeTask(task.id)}
+                          onClick={() => removeTask(task)}
                         >
-                          Remove
+                          Confirm Payment & Remove Task
                         </div>
                         <div
                           className="menu-item"
@@ -269,7 +359,7 @@ export default function ParentDashboard() {
           {tasks.length > 4 && (
             <button
               className="see-more-btn"
-              onClick={() => navigate("/parent-tasks")}
+              onClick={() => navigate("/parent-tasks", { state: { tasks } })}
             >
               See More Tasks
             </button>
@@ -357,7 +447,6 @@ export default function ParentDashboard() {
             </button>
           </div>
 
-          {/* Expense sticky notes */}
           <div className="expenses-list">
             {expenses.map((exp) => (
               <div key={exp.id} className="expense-item">
@@ -365,7 +454,7 @@ export default function ParentDashboard() {
                 <span className="expense-amount">${exp.amount.toFixed(2)}</span>
 
                 {/* 3-dot menu for Modify / Remove */}
-                <div
+                {/* <div
                   style={{ cursor: "pointer" }}
                   onClick={() =>
                     setMenuOpen(
@@ -374,7 +463,7 @@ export default function ParentDashboard() {
                   }
                 >
                   <MoreVertical size={16} />
-                </div>
+                </div> */}
 
                 {menuOpen === `exp-${exp.id}` && (
                   <div
@@ -466,33 +555,14 @@ export default function ParentDashboard() {
                   </button>
                   <button
                     className="upload-btn"
-                    onClick={() => {
+                    onClick={async () => {
                       if (editExpense.id) {
-                        // Modify existing
-                        setExpenses((prev) =>
-                          prev.map((e) =>
-                            e.id === editExpense.id
-                              ? {
-                                  ...e,
-                                  category: editExpense.name,
-                                  amount: editExpense.amount,
-                                }
-                              : e,
-                          ),
-                        );
+                        // (Optional) You can later wire PUT /expenses/:id here
+                        console.warn("Edit expense not wired to API yet");
                       } else {
-                        // Add new
-                        setExpenses((prev) => [
-                          ...prev,
-                          {
-                            id: Date.now(),
-                            category: editExpense.name,
-                            amount: editExpense.amount,
-                            createdAt: new Date().toISOString(),
-                          },
-                        ]);
+                        await createExpense(editExpense);
                       }
-                      setBalance((prev) => prev - editExpense.amount);
+
                       setEditExpense(null);
                     }}
                   >
@@ -503,7 +573,7 @@ export default function ParentDashboard() {
             </div>
           )}
         </section>
-        <section className="daily-summary">
+        {/* <section className="daily-summary">
           <h3>Today's Summary</h3>
           <ul>
             {summary
@@ -517,7 +587,20 @@ export default function ParentDashboard() {
               ))}
           </ul>
         </section>
+
+        {/* Monthly Statement Button */}
+        <button
+          onClick={() => navigate("/parent-monthly-statement")}
+          className="monthly-statement-btn"
+        >
+          Monthly Statement
+        </button>
       </main>
+      <AddTaskPopup
+        newTask={newTask}
+        setNewTask={setNewTask}
+        onTaskAdded={() => fetchTasks()}
+      />
     </div>
   );
 }

@@ -12,62 +12,87 @@ import {
 } from "recharts";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const FarmersMarket = () => {
   const navigate = useNavigate();
 
-  const handleFruitClick = (fruitName, fruitData) => {
-    navigate("/fruit-detail", { state: { fruitName, fruitData } });
-  };
-
-  const [balance, setBalance] = useState(110.5);
-
   const [portfolioHistory, setPortfolioHistory] = useState([]);
-  const [timeRange, setTimeRange] = useState("all"); // week/month/year/all
+  const [timeRange, setTimeRange] = useState("all");
 
-  const [apple, setApple] = useState([]);
-  const [banana, setBanana] = useState([]);
-  const [orange, setOrange] = useState([]);
-  const [strawberry, setStrawberry] = useState([]);
+  const [fruitData, setFruitData] = useState({
+    apple: [],
+    banana: [],
+    orange: [],
+    strawberry: [],
+  });
 
-  useEffect(() => {
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - 29);
+  const [latestPrices, setLatestPrices] = useState({
+    apple: 0,
+    banana: 0,
+    orange: 0,
+    strawberry: 0,
+  });
 
-    const generateData = () => {
-      let portfolio = [];
-      let apples = [];
-      let bananas = [];
-      let oranges = [];
-      let strawberries = [];
+  // Fetch latest stock prices
+  const fetchFruitPrices = async () => {
+    try {
+      const fruits = ["apple", "banana", "orange", "strawberry"];
+      const prices = {};
 
-      for (let i = 0; i < 30; i++) {
-        const date = new Date(startDate);
-        date.setDate(startDate.getDate() + i);
-        const isoDate = date.toISOString().split("T")[0];
-
-        const dataPoint = {
-          date: isoDate,
-          data: balance + i * Math.random() * 5, // simulate portfolio growth
-        };
-
-        portfolio.push(dataPoint);
-
-        apples.push({ date: isoDate, price: 140 + Math.random() * 20 });
-        bananas.push({ date: isoDate, price: 50 + Math.random() * 5 });
-        oranges.push({ date: isoDate, price: 30 + Math.random() * 5 });
-        strawberries.push({ date: isoDate, price: 20 + Math.random() * 5 });
+      for (let fruit of fruits) {
+        const res = await axios.get(`http://localhost:5000/stocks/${fruit}`);
+        prices[fruit] = res.data.length
+          ? res.data[res.data.length - 1].price
+          : 0;
       }
 
-      setPortfolioHistory(portfolio);
-      setApple(apples);
-      setBanana(bananas);
-      setOrange(oranges);
-      setStrawberry(strawberries);
-    };
+      setLatestPrices(prices);
+    } catch (err) {
+      console.error("Error fetching fruit prices:", err);
+    }
+  };
 
-    generateData();
-  }, [balance]);
+  // Fetch user portfolio per fruit
+  const fetchPortfolioPerUser = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/stocksperuser");
+      const data = res.data;
+
+      // Save each fruit's data
+      setFruitData(data);
+
+      // Compute daily total balance
+      const dates = data.apple.map((d) => d.date);
+      const dailyTotal = dates.map((date, i) => {
+        let sum = 0;
+        for (let fruit of ["apple", "banana", "orange", "strawberry"]) {
+          if (data[fruit][i]) sum += data[fruit][i].bal;
+        }
+        return { date, data: sum };
+      });
+
+      setPortfolioHistory(dailyTotal);
+    } catch (err) {
+      console.error("Error fetching user portfolio:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchPortfolioPerUser();
+    fetchFruitPrices();
+  const fruits = ["apple", "banana", "orange", "strawberry"];
+  
+  fruits.forEach(async (fruit) => {
+    try {
+      const res = await axios.get(`http://localhost:5000/stocks/${fruit}`);
+      setFruitPrices(prev => ({ ...prev, [fruit]: res.data }));
+    } catch (err) {
+      console.error(`Failed to fetch ${fruit} prices`, err);
+    }
+  });
+}, []);
+
 
   const getFilteredPortfolio = () => {
     let days = portfolioHistory.length;
@@ -87,38 +112,51 @@ const FarmersMarket = () => {
     return portfolioHistory.slice(-days);
   };
 
-  const latestPrice = (arr) =>
-    arr.length ? arr[arr.length - 1].price.toFixed(2) : "-";
+const latestPrice = (fruit) => {
+  const arr = fruitPrices[fruit];
+  return arr.length ? arr[arr.length - 1].price.toFixed(2) : "-";
+};
 
-  const percentChange = (arr) => {
-    if (arr.length < 2) return 0;
-    const prev = arr[arr.length - 2].price;
-    const latest = arr[arr.length - 1].price;
-    return (((latest - prev) / prev) * 100).toFixed(2);
+  const [fruitPrices, setFruitPrices] = useState({
+  apple: [],
+  banana: [],
+  orange: [],
+  strawberry: [],
+});
+
+
+ const percentChange = (fruit) => {
+  const arr = fruitPrices[fruit];
+  if (!arr || arr.length < 2) return 0;
+
+  const prevPrice = arr[arr.length - 2]?.price;
+  const latestPrice = arr[arr.length - 1]?.price;
+
+  if (!prevPrice) return 0; // avoid division by zero
+  return (((latestPrice - prevPrice) / prevPrice) * 100).toFixed(2);
+};
+
+
+
+  const handleFruitClick = (fruitName, data) => {
+    navigate("/fruit-detail", { state: { fruitName, fruitData: data } });
   };
 
-  const fruits = [
-    { name: "apple", ticker: "AAPL", data: apple },
-    { name: "banana", ticker: "BNNA", data: banana },
-    { name: "orange", ticker: "ORNG", data: orange },
-    { name: "strawberry", ticker: "STRB", data: strawberry },
-  ];
+const fruits = [
+  { name: "Apple Tree", key: "apple" },
+  { name: "Banana Grove", key: "banana" },
+  { name: "Orange Orchard", key: "orange" },
+  { name: "Strawberry Patch", key: "strawberry" },
+];
+
 
   return (
     <div className="tasks-page">
       <div className="tasks-card">
         <div className="flex-center-align">
-          <div className="flex-center-align">
-            <Link to="/kids-dashboard" className="kids-title">
-              My Piggy Dashboard
-            </Link>
-          </div>
-            {/* <div className="back-btn">  <Link to="/kids-dashboard">⬅️ Dashboard</Link></div> */} 
-        </div>
-        {/* Available to invest */}
-        <div className="available-card">
-          <p className="available-label">Available to Invest</p>
-          <h3 className="available-amount">${balance.toFixed(2)}</h3>
+          <Link to="/kids-dashboard" className="kids-title">
+            My TeddyBank Dashboard
+          </Link>
         </div>
 
         {/* Portfolio balance chart */}
@@ -140,18 +178,19 @@ const FarmersMarket = () => {
           </ResponsiveContainer>
 
           {/* Time range buttons */}
-          <div
-            className="time-range-buttons"
-            style={{ display: "flex", gap: "8px", marginTop: "10px" }}
-          >
+          <div className="time-range-buttons">
             {["week", "month", "year", "all"].map((range) => (
               <button
                 key={range}
-                className={`complete-btn ${timeRange === range ? "active" : ""}`}
-                style={{ flex: 1 }}
+                className={`complete-btn piggy-btn ${
+                  timeRange === range ? "active" : ""
+                }`}
                 onClick={() => setTimeRange(range)}
               >
-                {range.charAt(0).toUpperCase() + range.slice(1)}
+                {range === "week" && "📅 Week"}
+                {range === "month" && "🗓️ Month"}
+                {range === "year" && "📆 Year"}
+                {range === "all" && "🌈 All"}
               </button>
             ))}
           </div>
@@ -159,33 +198,30 @@ const FarmersMarket = () => {
 
         {/* Fruits / Stocks list */}
         <div className="fruit-stock-list">
-          {fruits.map((fruit) => {
-            const change = percentChange(fruit.data);
-            return (
-              <div key={fruit.name} className="fruit-stock-card">
-                <div className="fruit-info">
-                  <p className="fruit-name">
-                    {fruit.name}{" "}
-                    <span className="ticker">({fruit.ticker})</span>
-                  </p>
-                  <p className="fruit-price">${latestPrice(fruit.data)}</p>
-                </div>
-                <div className="fruit-actions">
-                  <p
-                    className={`percent-change ${change >= 0 ? "up" : "down"}`}
-                  >
-                    {change >= 0 ? "▲" : "▼"} {Math.abs(change)}%
-                  </p>
-                  <button
-                    className="invest-btn"
-                    onClick={() => handleFruitClick(fruit.name, fruit.data)}
-                  >
-                    INVEST
-                  </button>
-                </div>
-              </div>
-            );
-          })}
+          <h3 className="market-title">🌽 Farmer’s Market Stocks</h3>
+          {fruits.map(fruit => {
+  const change = percentChange(fruit.key);
+  return (
+    <div key={fruit.name} className="fruit-stock-card">
+      <div className="fruit-info">
+        <p className="fruit-name">{fruit.name}</p>
+        <p className="fruit-price">${latestPrice(fruit.key)}</p>
+      </div>
+      <div className="fruit-actions">
+        <p className={`percent-change ${change >= 0 ? "up" : "down"}`}>
+          {change >= 0 ? "▲" : "▼"} {Math.abs(change)}%
+        </p>
+        <button
+          className="invest-btn piggy-invest-btn"
+          onClick={() => handleFruitClick(fruit.name, fruitPrices[fruit.key])}
+        >
+          🪙 INVEST
+        </button>
+      </div>
+    </div>
+  );
+})}
+
         </div>
       </div>
     </div>

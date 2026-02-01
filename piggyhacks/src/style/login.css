@@ -45,7 +45,9 @@
 }
 
 .pig-icon {
-  color: #ec4899;
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
 }
 
 /* Toggle buttons */
